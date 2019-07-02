@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior">
+    <RelativeLayout
+        android:id="@+id/rl_bottom"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/space10"
+        android:paddingRight="@dimen/space5"
+        android:paddingTop="@dimen/space5"
+        android:paddingBottom="@dimen/space5"
+        android:background="#E9EDED"
+        android:layout_alignParentBottom="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <Button
+            android:id="@+id/bt_send"
+            android:layout_width="60dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_centerInParent="true"
+            android:background="@drawable/btn_grey"
+            android:gravity="center"
+            android:stateListAnimator="@null"
+            android:text="Invia"
+            android:textAppearance="@style/Light"
+            android:textColor="@color/colorAccent"
+            android:textSize="@dimen/h3" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@id/bt_send"
+            android:background="@drawable/bg_white_rounded"
+            android:layout_centerVertical="true">
+
+            <EditText
+                android:id="@+id/et_message"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_marginEnd="0dp"
+                android:layout_marginRight="0dp"
+                android:background="@android:color/transparent"
+                android:hint="Scrivi il tuo messaggio"
+                android:inputType="textCapSentences"
+                android:maxLines="3"
+                android:padding="@dimen/space15"
+                android:textAppearance="@style/Light"
+                android:textColor="@color/colorTextBlack"
+                android:textColorHint="@color/colorTextHint"
+                android:textSize="@dimen/h3" />
+        </RelativeLayout>
+    </RelativeLayout>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/recyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="608dp"
+        android:layout_above="@id/rl_bottom"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="62dp"
+        android:overScrollMode="never" />
+</RelativeLayout>
