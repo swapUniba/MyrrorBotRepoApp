@@ -9,12 +9,5 @@
     tools:context="com.uiresource.messenger.MainActivity"
     tools:showIn="@layout/app_bar_main">
 
-    <!-- ELIMINARE -->
-    <!--<FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>-->
-
-
 
 </RelativeLayout>

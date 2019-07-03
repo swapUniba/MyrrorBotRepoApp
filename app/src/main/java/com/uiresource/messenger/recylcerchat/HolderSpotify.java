@@ -2,19 +2,20 @@ package com.uiresource.messenger.recylcerchat;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.uiresource.messenger.R;
 
+public class HolderSpotify extends RecyclerView.ViewHolder {
 
-public class HolderMe extends RecyclerView.ViewHolder {
+    private TextView time;
+    private WebView webView;
 
-    private TextView time, chatText;
-
-    public HolderMe(View v) {
+    public HolderSpotify(View v) {
         super(v);
         time = (TextView) v.findViewById(R.id.tv_time);
-        chatText = (TextView) v.findViewById(R.id.tv_chat_text);
+        webView = (WebView) v.findViewById(R.id.webView);
     }
 
     public TextView getTime() {
@@ -25,11 +26,11 @@ public class HolderMe extends RecyclerView.ViewHolder {
         this.time = time;
     }
 
-    public TextView getChatText() {
-        return chatText;
+    public void setWebView(WebView webView) {
+        this.webView = webView;
     }
 
-    public void setChatText(TextView chatText) {
-        this.chatText = chatText;
+    public WebView getWebView() {
+        return webView;
     }
 }

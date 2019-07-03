@@ -1,5 +1,7 @@
 package com.uiresource.messenger;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -19,9 +21,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
+import android.webkit.WebView;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.RelativeLayout;
 
 import com.uiresource.messenger.recylcerchat.ChatData;
 import com.uiresource.messenger.recylcerchat.ConversationRecyclerView;
@@ -46,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.StringTokenizer;
 
 public class Chat extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -59,6 +66,7 @@ public class Chat extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
+
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -81,6 +89,7 @@ public class Chat extends BaseActivity
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAdapter = new ConversationRecyclerView(this,setData());
         mRecyclerView.setAdapter(mAdapter);
+
         /*mRecyclerView.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -95,7 +104,11 @@ public class Chat extends BaseActivity
                 mRecyclerView.postDelayed(new Runnable() {
                     @Override
                     public void run() {
-                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        try{
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }catch (IllegalArgumentException e){
+                            e.getMessage();
+                        }
                     }
                 }, 500);
             }
@@ -109,8 +122,8 @@ public class Chat extends BaseActivity
                     ChatData item = new ChatData();
                     Date currentTime = Calendar.getInstance().getTime();
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("2");
-                    String mess = text.getText().toString();
+                    item.setType("2");//Imposto il layout della risposta, ovvero YOU
+                    String mess = text.getText().toString(); //Domanda dell'utente
                     item.setText(mess);
                     data.add(item);
                     mAdapter.addItem(data);
@@ -122,25 +135,21 @@ public class Chat extends BaseActivity
             }
         });
 
+        //Quando l'utente preme fuori dalla tastiera, quest'ultima viene nascosta
+        mRecyclerView.setOnTouchListener(new View.OnTouchListener() {
 
-        //Keyboard
-        /*DrawerLayout layout = (DrawerLayout) findViewById(R.id.activity_chat);
-        layout.setOnTouchListener(new View.OnTouchListener()
-        {
             @Override
-            public boolean onTouch(View view, MotionEvent ev)
-            {
-                hideKeyboard(view);
+            public boolean onTouch(View v, MotionEvent event) {
+
+                InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(v.getWindowToken(), 0);
+
                 return false;
             }
         });
 
-        protected void hideKeyboard(View view)
-        {
-            InputMethodManager in = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
-            in.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
-        }*/
     }
+
 
     public List<ChatData> setData(){
         List<ChatData> data = new ArrayList<>();
@@ -214,7 +223,7 @@ public class Chat extends BaseActivity
     }
 
 
-    public class Background extends AsyncTask<String, Void, String> {
+    public class Background extends AsyncTask<String, Void, ArrayList<String>> {
 
         @Override
         protected void onPreExecute() {
@@ -226,22 +235,90 @@ public class Chat extends BaseActivity
          * @param s
          */
         @Override
-        protected void onPostExecute(String s) {
+        protected void onPostExecute(ArrayList<String> s) {
 
             try {
-                JSONObject arr = new JSONObject(s);
+
+                //Esempio valore JSON {"intentName":"Identita utente","confidence":1,"answer":"Ti chiami Cataldo Musto"}
+
+                String result = s.get(0);
+                String mess = s.get(1);
+
+                JSONObject arr = new JSONObject(result);
+
                 String answer = arr.getString("answer");
-                Log.w("ANSWER",answer);
+                String intentName = arr.getString("intentName");
+                double confidence = Double.parseDouble(arr.getString("confidence"));
+
+                Log.e("INTENT", arr.toString());
+
+
+                //YOUTUBE --> Valori soglia diversi
+                if(intentName.equalsIgnoreCase("Video in base alle emozioni") || intentName.equalsIgnoreCase("Ricerca Video")){
+
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("6");//Imposto il layout della risposta, ovvero YOUTUBE
+
+                    //Url da visualizzare
+                    String url = answer;
+
+                    item.setText(url);
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
+                }else if (intentName.equalsIgnoreCase("Interessi")  //INTENT GENERICI
+                            || intentName.equalsIgnoreCase("Contatti")
+                            || intentName.equalsIgnoreCase("Esercizio fisico")
+                            || intentName.equalsIgnoreCase("Personalita")) {
+
+                    Log.w("ANSWER",answer);
+
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    item.setText(answer);
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                }else {
+                    Log.w("ANSWER",answer);
+
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    item.setText(answer);
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                }
+
+
+
+                //PER I DATI NORMALI
+                /*Log.w("ANSWER",answer);
+
                 List<ChatData> data = new ArrayList<ChatData>();
                 ChatData item = new ChatData();
                 Date currentTime = Calendar.getInstance().getTime();
                 item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                 item.setType("1");
 
-                item.setText(answer );
+                item.setText(answer);
                 data.add(item);
                 mAdapter.addItem(data);
-                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);*/
 
 
             } catch (JSONException e) {
@@ -257,13 +334,15 @@ public class Chat extends BaseActivity
          * @return
          */
         @Override
-        protected String doInBackground(String... voids) {
+        protected ArrayList<String> doInBackground(String... voids) {
 
+            String mess = voids[0];//Domanda dell'utente
             String result = "";
             String urlString = "http://settenettis.altervista.org/php/intentDetection.php";//Url per la query
             //String urlString = "http://localhost/MyrrorBot/php/intentDetection.php";
 
             try {
+
                 //Imposto parametri per la connessione
                 URL url = new URL(urlString);
                 HttpURLConnection http = (HttpURLConnection) url.openConnection();
@@ -274,10 +353,9 @@ public class Chat extends BaseActivity
 
                 OutputStream ops = http.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(ops,"UTF-8"));
+
                 //Stringa di output
-                // Log.w("ANSWER",voids[0]);
                 String data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8");
-                //Log.w("ANSWER",data);
 
                 writer.write(data);
                 writer.flush();
@@ -297,9 +375,13 @@ public class Chat extends BaseActivity
                     ips.close();
                     http.disconnect();
 
-
                 }
-                return result;
+
+                ArrayList<String> arrayList = new ArrayList<>();
+                arrayList.add(result);
+                arrayList.add(mess);
+
+                return arrayList;
 
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
@@ -311,7 +393,42 @@ public class Chat extends BaseActivity
                 e.printStackTrace();
             }
 
-            return result;
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add(result);
+            arrayList.add(mess);
+
+            return arrayList;
         }
+    }
+
+    //Conta le parole in una frase
+    public static int countWords(String sentence) {
+        if (sentence == null || sentence.isEmpty()) {
+            return 0;
+        }
+        StringTokenizer tokens = new StringTokenizer(sentence);
+        return tokens.countTokens();
+    }
+
+    //Inserisce stringa in un'altra
+    public static String insertString(String originalString, String stringToBeInserted, int index) {
+
+        // Create a new string
+        String newString = new String();
+
+        for (int i = 0; i < originalString.length(); i++) {
+
+            // Insert the original string character into the new string
+            newString += originalString.charAt(i);
+
+            if (i == index) {
+
+                // Insert the string to be inserted into the new string
+                newString += stringToBeInserted;
+            }
+        }
+
+        //Return the modified String
+        return newString;
     }
 }

@@ -1,8 +1,5 @@
 package com.uiresource.messenger.recylcerchat;
 
-/**
- * Created by Dytstudio.
- */
 
 public class ChatData {
     String type, text, time;
@@ -29,5 +26,45 @@ public class ChatData {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+
+    //YOUTUBE
+
+    private String title;
+    private Long id;
+    private String videoId;
+    private String imageUrl;
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getVideoId() {
+        return videoId;
+    }
+
+    public void setVideoId(String videoId) {
+        this.videoId = videoId;
     }
 }
