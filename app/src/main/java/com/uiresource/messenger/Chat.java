@@ -1,12 +1,20 @@
 package com.uiresource.messenger;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.content.res.Resources;
+import android.graphics.drawable.Drawable;
+import android.location.Location;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,9 +37,19 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+import com.spotify.sdk.android.authentication.AuthenticationClient;
+import com.spotify.sdk.android.authentication.AuthenticationRequest;
+import com.spotify.sdk.android.authentication.AuthenticationResponse;
 import com.uiresource.messenger.recylcerchat.ChatData;
 import com.uiresource.messenger.recylcerchat.ConversationRecyclerView;
+import com.uiresource.messenger.recylcerchat.Meteo;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -54,6 +72,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
+
 public class Chat extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -61,6 +81,30 @@ public class Chat extends BaseActivity
     private ConversationRecyclerView mAdapter;
     private EditText text;
     private Button send;
+
+    //MAPS
+    private FusedLocationProviderClient mFusedLocationClient;
+    private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
+    private static final String COURSE_LOCATION = Manifest.permission.ACCESS_COARSE_LOCATION;
+    private static final int LOCATION_PERMISSION_REQUEST_CODE = 1234;
+    private LatLng position;
+    private String city;
+
+    //SPOTIFY
+    private static final String CLIENT_ID = "7a17bf0bdb234ef2870a58f22f26e8bd";
+    private static final String REDIRECT_URI = "com.uiresource.messenger://callback"; //Application ID della app
+
+    SpotifyAppRemote spotifyAppRemote = null;
+
+    public SpotifyAppRemote getSpotifyAppRemote() {
+        return spotifyAppRemote;
+    }
+
+    public static String accessToken = "";
+
+    public void setSpotifyAppRemote(SpotifyAppRemote spotifyAppRemote) {
+        this.spotifyAppRemote = spotifyAppRemote;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,6 +116,18 @@ public class Chat extends BaseActivity
         setSupportActionBar(toolbar);
         setupToolbarWithUpNav(R.id.toolbar, "Nome del bot", R.drawable.ic_action_back);
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},1024);
+
+        //controllo permessi
+        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},1024);
+
+
+        }
+
+        getDeviceLocation();
+
 
         //Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -82,6 +138,9 @@ public class Chat extends BaseActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        NavigationView navigationViewBottom = (NavigationView) findViewById(R.id.nav_view_bottom);
+        navigationViewBottom.setNavigationItemSelectedListener(this);
 
         //RecyclerView
         mRecyclerView = (RecyclerView) findViewById(R.id.recyclerView);
@@ -148,26 +207,23 @@ public class Chat extends BaseActivity
             }
         });
 
+
+            //CODICE PER OTTENERE ACCESS TOKEN ------- UTILIZZI FUTURI
+            /*AuthenticationRequest.Builder builder =
+                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+
+            builder.setScopes(new String[]{"streaming"});
+            AuthenticationRequest request = builder.build();
+
+            AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);*/
+
+
+
     }
 
 
     public List<ChatData> setData(){
         List<ChatData> data = new ArrayList<>();
-
-        /*String text[] = {"15 September","Hi, Julia! How are you?", "Hi, Joe, looks great! :) ", "I'm fine. Wanna go out somewhere?", "Yes! Coffe maybe?", "Great idea! You can come 9:00 pm? :)))", "Ok!", "Ow my good, this Kit is totally awesome", "Can you provide other kit?", "I don't have much time, :`("};
-        String time[] = {"", "5:30pm", "5:35pm", "5:36pm", "5:40pm", "5:41pm", "5:42pm", "5:40pm", "5:41pm", "5:42pm"};
-        String type[] = {"0", "2", "1", "1", "2", "1", "2", "2", "2", "1"};
-
-        for (int i=0; i<text.length; i++){
-            ChatData item = new ChatData();
-            item.setType(type[i]);
-            item.setText(text[i]);
-            item.setTime(time[i]);
-            data.add(item);
-        }*/
-
-
-
 
         return data;
     }
@@ -215,6 +271,12 @@ public class Chat extends BaseActivity
             Intent intent = new Intent(Chat.this,Chat.class);
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
+
+            //Elimino le credenziali dalle shared preferences
+            PreferenceData.setUserLoggedInStatus(this,false);   // Imposto il login status
+
+            Intent intent = new Intent(Chat.this,LoginActivity.class);
+            startActivity(intent);
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -288,7 +350,168 @@ public class Chat extends BaseActivity
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-                }else {
+
+                }else if (intentName.equalsIgnoreCase("Canzone per nome")
+                        || intentName.equalsIgnoreCase("Canzone per nome subintent")
+                        || intentName.equalsIgnoreCase("Canzone per artista")
+                        || intentName.equalsIgnoreCase("Canzone per artista subintent")){
+
+                    Log.w("ANSWER",answer);
+
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("7");
+
+                    item.setText(answer);
+                    item.setFlag(0);//Indico che è una canzone
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    spotifyAppRemote = item.getmSpotifyAppRemote();
+
+
+                }else if (intentName.equalsIgnoreCase("Canzoni in base al genere")
+                        || intentName.equalsIgnoreCase("Canzoni in base al genere subintent")
+                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni")
+                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni subintent")
+                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni")
+                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni subintent")
+                        || intentName.equalsIgnoreCase("Canzoni personalizzate")
+                        || intentName.equalsIgnoreCase("Canzoni personalizzate subintent")) {
+
+                    Log.w("ANSWER",answer);
+
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("5");
+
+                    item.setText(answer);
+                    item.setFlag(1);//Indico che è una playlist
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    spotifyAppRemote = item.getmSpotifyAppRemote();
+
+
+                }else if(intentName.equals("Notizie in base ad un argomento") || intentName.equals("Notizie in base agli interessi")
+                        || intentName.equals("Notizie odierne")  || intentName.equals("Ricerca articolo") ){
+                    JSONObject news = new JSONObject(answer);
+                    String url = news.getString("url");
+                    String img = news.getString("image");
+                    String title = news.getString("title");
+                    answer = title;
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+
+                    item.setImg(img);
+                    item.setType("3");
+
+                    item.setText(url);
+
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
+
+                } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo")){
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+
+                    item.list = new ArrayList<Meteo>();
+
+                    Resources res = getResources();
+                    Drawable drawable = res.getDrawable(R.drawable.user4);
+                    String ora  ;
+                    int temp ;
+
+                    if(answer.equals("")){
+                        item.setType("1");
+                        String messaggio = "sfortunatamente non sono stati trovati dati a riguardo";
+                        item.setText(messaggio);
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
+                    String[] array = answer.split("<br>");
+                    String dataM = "Dati meteo del ";
+                    for (int i = 0;i< array.length;i++){
+                        String record[] = array[i].split(";");
+
+                        if(i == 0)
+                            dataM += record[0].trim();
+
+                        ora = record[1].trim();
+                        temp =(int) Float.parseFloat(record[2].trim());
+                        String condition = record[3].trim();
+                        switch (condition){
+                            case "cielo sereno":
+                                drawable = res.getDrawable(R.drawable.icon2);
+                                break;
+
+                            case "poco nuvoloso":
+                                drawable = res.getDrawable(R.drawable.icon1);
+                                break;
+
+                            case "parzialmente nuvoloso":
+                                drawable = res.getDrawable(R.drawable.icon7);
+                                break;
+
+                            case "nubi sparse":
+                                drawable = res.getDrawable(R.drawable.icon6);
+                                break;
+
+                            case "pioggia leggera":
+                                drawable = res.getDrawable(R.drawable.icon4);
+                                break;
+
+                            case "nuvoloso":
+                                drawable = res.getDrawable(R.drawable.icon5);
+                                break;
+
+                            case "piogge modeste":
+                                drawable = res.getDrawable(R.drawable.icon9);
+                                break;
+
+                            case "pioggia pesante":
+                                drawable = res.getDrawable(R.drawable.icon11);
+                                break;
+
+                            case "neve leggera":
+                                drawable = res.getDrawable(R.drawable.icon13);
+                                break;
+
+                            case "neve":
+                                drawable = res.getDrawable(R.drawable.icon14);
+                                break;
+                        }
+
+                        Meteo m = new Meteo(temp,ora+":00",drawable);
+                        if(ora != null && Integer.parseInt(ora) > 6){
+                            item.list.add(m);
+                        }
+
+                    }
+
+                    ChatData item2 = new ChatData();
+                    item2.setType("1");
+                    item2.setText(dataM);
+                    data.add(item2);
+
+                    item.setType("4");
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
+
+                } else {
                     Log.w("ANSWER",answer);
 
                     List<ChatData> data = new ArrayList<ChatData>();
@@ -303,22 +526,6 @@ public class Chat extends BaseActivity
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                 }
-
-
-
-                //PER I DATI NORMALI
-                /*Log.w("ANSWER",answer);
-
-                List<ChatData> data = new ArrayList<ChatData>();
-                ChatData item = new ChatData();
-                Date currentTime = Calendar.getInstance().getTime();
-                item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                item.setType("1");
-
-                item.setText(answer);
-                data.add(item);
-                mAdapter.addItem(data);
-                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);*/
 
 
             } catch (JSONException e) {
@@ -337,9 +544,9 @@ public class Chat extends BaseActivity
         protected ArrayList<String> doInBackground(String... voids) {
 
             String mess = voids[0];//Domanda dell'utente
+
             String result = "";
-            String urlString = "http://settenettis.altervista.org/php/intentDetection.php";//Url per la query
-            //String urlString = "http://localhost/MyrrorBot/php/intentDetection.php";
+            String urlString = "http://myrrorbot.000webhostapp.com//php/intentDetection.php";
 
             try {
 
@@ -354,8 +561,14 @@ public class Chat extends BaseActivity
                 OutputStream ops = http.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(ops,"UTF-8"));
 
-                //Stringa di output
-                String data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8");
+                String data = "";
+                if (city == null){
+                     data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8");
+                }else {
+                    //Stringa di output
+                     data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
+                            +"&&city="+URLEncoder.encode(city,"UTF-8");
+                }
 
                 writer.write(data);
                 writer.flush();
@@ -431,4 +644,161 @@ public class Chat extends BaseActivity
         //Return the modified String
         return newString;
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
+
+        if (spotifyAppRemote != null){
+            Log.i("stato player","DISCONESSO");
+            SpotifyAppRemote.disconnect(getSpotifyAppRemote());
+        }
+
+    }
+
+    //CODICE PER OTTENERE ACCESS TOKEN ------- UTILIZZI FUTURI
+    /*protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+
+        // Check if result comes from the correct activity
+        if (requestCode == REQUEST_CODE) {
+            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+
+            switch (response.getType()) {
+                // Response was successful and contains auth token
+                case TOKEN:
+                    // Handle successful response
+                    setAccessToken(response.getAccessToken());
+                    Log.i("success",getAccessToken());
+                    break;
+
+                // Auth flow returned an error
+                case ERROR:
+                    // Handle error response
+                    Log.i("error","nooo");
+                    break;
+
+                // Most likely auth flow was cancelled
+                default:
+                    // Handle other cases
+                    Log.i("default","default");
+
+            }
+        }
+    }*/
+
+    public String getAccessToken() {
+        return accessToken;
+    }
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
+
+    //metodo per prendere la posizione del dispositivo
+    private void getDeviceLocation() {
+
+        try {
+
+            //trovo l'ultima posizione
+            mFusedLocationClient.getLastLocation().addOnSuccessListener(new OnSuccessListener<Location>() {
+                @Override
+                public void onSuccess(Location location) {
+                    //se la posizione ottenuta è corrette e non nulla
+                    if(location != null){
+
+                        double lat = location.getLatitude();
+                        double longitude = location.getLongitude();
+
+                        LatLng myLocation = new LatLng(lat,longitude);
+                        position = myLocation;
+                        getCityBackground b = new getCityBackground();
+                        b.execute(myLocation);
+
+
+                    }
+                }
+
+
+            });
+        } catch (SecurityException e) {
+            Log.e("Chat", "getDeviceLocation: SecurityException: " + e.getMessage() );
+        }
+    }
+
+    public class getCityBackground extends AsyncTask<LatLng,Void,String>{
+
+
+        @Override
+        protected void onPostExecute(String s) {
+
+            try {
+                JSONArray arr = new JSONObject(s).getJSONArray("results");
+                for (int i= 0;i< arr.length();i++) {
+                    JSONArray o = arr.getJSONObject(i).getJSONArray("locations");
+
+                    for (int j=0;j<o.length();j++){
+                        JSONObject  temp =  o.getJSONObject(i);
+                        if(temp.get("adminArea5") != null){
+                            city = temp.getString("adminArea5");
+                        }
+
+                    }
+
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+
+        @Override
+        protected String doInBackground(LatLng... latLngs) {
+            LatLng coords = latLngs[0];
+            String coordinate = coords.latitude+","+coords.longitude;
+            String result = "";
+            String urlString = "http://www.mapquestapi.com/geocoding/v1/reverse?key=pJ4Mo5GOTpHMvuCRlIyiFomZqsSAeAHM&location="+coordinate+"&includeRoadMetadata=true&includeNearestIntersection=true";
+
+            try {
+                //Imposto parametri per la connessione
+                URL url = new URL(urlString);
+                HttpURLConnection http = (HttpURLConnection) url.openConnection();
+                http.setRequestMethod("GET");
+                http.setDoInput(true);
+                http.setDoOutput(true);
+                InputStream ips = http.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "ISO-8859-1"));
+
+                String line;
+
+                while ((line = reader.readLine()) != null) {
+                    result += line;
+                    reader.close();
+                    ips.close();
+                    http.disconnect();
+
+                }
+
+                return result;
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            return result;
+        }
+
+
+    }
+
+
 }

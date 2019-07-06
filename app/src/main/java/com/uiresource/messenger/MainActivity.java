@@ -2,14 +2,17 @@ package com.uiresource.messenger;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.MenuItemCompat;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuInflater;
 import android.view.SubMenu;
@@ -26,10 +29,13 @@ import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.TextView;
 
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+
 public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     TextView chats;
+    TextView logout;
     NavigationView navigationView, navigationViewBottom;
     DrawerLayout drawer;
 
@@ -56,6 +62,10 @@ public class MainActivity extends BaseActivity
 
         chats =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_chats));
+
+        logout = (TextView) MenuItemCompat.getActionView(navigationViewBottom.getMenu().
+                findItem(R.id.nav_logout));
+
         initializeCountDrawer();
 
     }
@@ -108,6 +118,13 @@ public class MainActivity extends BaseActivity
             Intent intent = new Intent(MainActivity.this,Chat.class);
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
+
+            //Elimino le credenziali dalle shared preferences
+            PreferenceData.setUserLoggedInStatus(this,false);   // Imposto il login status
+
+            Intent intent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(intent);
+            finish();
         }
 
         drawer.closeDrawer(GravityCompat.START);
@@ -117,6 +134,8 @@ public class MainActivity extends BaseActivity
     public boolean onPrepareOptionsMenu(Menu menu) {
         return super.onPrepareOptionsMenu(menu);
     }
+
+
 
 
 }

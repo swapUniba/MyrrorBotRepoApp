@@ -2,6 +2,8 @@ package com.uiresource.messenger.recylcerchat;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -15,11 +17,17 @@ import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerList
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
 import com.uiresource.messenger.R;
 
-import org.apache.commons.io.IOUtils;
-import org.json.JSONObject;
-
-import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
+
+import com.spotify.android.appremote.api.ConnectionParams;
+import com.spotify.android.appremote.api.Connector;
+import com.spotify.android.appremote.api.SpotifyAppRemote;
+
+import com.spotify.protocol.client.Subscription;
+import com.spotify.protocol.types.PlayerState;
+import com.spotify.protocol.types.Track;
+import com.uiresource.messenger.WebActivity;
 
 
 public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -28,7 +36,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     private List<ChatData> items;
     private Context mContext;
 
-    private final int DATE = 0, YOU = 1, ME = 2, NEWS = 3, METEO = 4 ,SPOTIFY = 5, YOUTUBE = 6;
+    private final int DATE = 0, YOU = 1, ME = 2, NEWS = 3, METEO = 4 ,SPOTIFY = 5, YOUTUBE = 6, SPOTIFY_SINGLE_TRACK = 7;
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
 
@@ -63,6 +71,8 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             return SPOTIFY;
         }else if (items.get(position).getType().equals("6")) {
             return YOUTUBE;
+        }else if (items.get(position).getType().equals("7")) {
+            return SPOTIFY_SINGLE_TRACK;
         }
         return -1;
     }
@@ -81,6 +91,14 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                 View v2 = inflater.inflate(R.layout.layout_holder_you, viewGroup, false);
                 viewHolder = new HolderYou(v2);
                 break;
+            case NEWS:
+                View vn = inflater.inflate(R.layout.layout_holder_news, viewGroup, false);
+                viewHolder = new HolderNews(vn);
+                break;
+            case METEO:
+                View v4 = inflater.inflate(R.layout.layout_meteo, viewGroup, false);
+                viewHolder = new holderMeteo(v4);
+                break;
             case SPOTIFY:
                 View v5 = inflater.inflate(R.layout.layout_spotify_you, viewGroup, false);
                 viewHolder = new HolderSpotify(v5);
@@ -88,9 +106,10 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             case YOUTUBE:
                 View v6 = inflater.inflate(R.layout.layout_youtube_you, viewGroup, false);
                 viewHolder = new HolderYoutube(v6);
-
-                //return new RecyclerView.ViewHolder(LayoutInflater.from(parent.getContext()).inflate(R.layout.layout_youtube_you, parent, false));
-
+                break;
+            case SPOTIFY_SINGLE_TRACK:
+                View v7 = inflater.inflate(R.layout.layout_spotify_single_track, viewGroup, false);
+                viewHolder = new HolderSpotifySingleTrack(v7);
                 break;
             default:
                 View v = inflater.inflate(R.layout.layout_holder_me, viewGroup, false);
@@ -122,6 +141,18 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                 HolderYoutube vh6 = (HolderYoutube) viewHolder;
                 configureViewHolder6(vh6, position);
                 break;
+            case SPOTIFY_SINGLE_TRACK:
+                HolderSpotifySingleTrack vh7 = (HolderSpotifySingleTrack) viewHolder;
+                configureViewHolder7(vh7, position);
+                break;
+            case NEWS:
+                HolderNews vhn = (HolderNews) viewHolder;
+                configureViewHolderNews(vhn, position);
+                break;
+            case METEO:
+                holderMeteo vh4 = (holderMeteo) viewHolder;
+                configureViewHolder4(vh4,position);
+                break;
             default:
                 HolderMe vh = (HolderMe) viewHolder;
                 configureViewHolder3(vh, position);
@@ -129,10 +160,51 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         }
     }
 
-    private void configureViewHolder5(HolderSpotify vh1, int position) {
-        vh1.getTime().setText(items.get(position).getTime());
-        vh1.getWebView().loadUrl(items.get(position).getText());
+    private void configureViewHolderNews(final HolderNews vh1, int position) {
+        final String url = items.get(position).getText();
+        //Log.w(TAG,url);
+        vh1.v.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(view.getContext(), WebActivity.class);
+                intent.putExtra("url",url);
+                view.getContext().startActivity(intent);
+            }
+        });
+        vh1.setImgBack(items.get(position).getImg());
+        vh1.getChatText().setText(items.get(position).getText());
+    }
 
+    private void configureViewHolder4(holderMeteo vh1, int position) {
+
+        ArrayList<Meteo> listMeteo = items.get(position).list;
+        vh1.init(listMeteo);
+        /*
+        ArrayAdapter<Meteo> adapter = new ArrayAdapter<Meteo>(this, R.layout.listItemMeteo,listMeteo);
+        list.setAdapter(adapter);
+        */
+
+    }
+
+    private void configureViewHolder7(HolderSpotifySingleTrack vh1, int position) {
+        vh1.getChatText().setText(items.get(position).getText());
+
+        vh1.getChatText().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                String url = items.get(position).getText();
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                mContext.startActivity(i);
+            }
+        });
+
+
+    }
+
+
+    private void configureViewHolder5(HolderSpotify vh1, int position) {
+        onBindSpotify(vh1, position);
 
     }
 
@@ -153,6 +225,16 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     }
     private void configureViewHolder1(HolderDate vh1, int position) {
             vh1.getDate().setText(items.get(position).getText());
+    }
+
+    public void onBindSpotify(HolderSpotify vh1, int position){
+
+
+        String url = items.get(position).getText();//Url della canzone
+
+        items.get(position).avvio(mContext,url,vh1);
+
+
     }
 
     public void onBindYoutube(HolderYoutube vh1, int position) {

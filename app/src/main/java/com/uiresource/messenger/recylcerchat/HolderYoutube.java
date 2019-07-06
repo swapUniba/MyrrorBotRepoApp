@@ -12,7 +12,6 @@ import com.uiresource.messenger.R;
 public class HolderYoutube extends RecyclerView.ViewHolder {
 
     private TextView time;
-    private WebView webView;
 
     TextView textWaveTitle;
     ImageView playButton;
@@ -23,7 +22,6 @@ public class HolderYoutube extends RecyclerView.ViewHolder {
     public HolderYoutube(View v) {
         super(v);
         time = (TextView) v.findViewById(R.id.tv_time);
-        webView = (WebView) v.findViewById(R.id.webView);
 
         textWaveTitle = (TextView) v.findViewById(R.id.textViewTitle);
         playButton = (ImageView) v.findViewById(R.id.btnPlay);
@@ -38,14 +36,6 @@ public class HolderYoutube extends RecyclerView.ViewHolder {
 
     public void setTime(TextView time) {
         this.time = time;
-    }
-
-    public void setWebView(WebView webView) {
-        this.webView = webView;
-    }
-
-    public WebView getWebView() {
-        return webView;
     }
 
     public ImageView getImageViewItems() {

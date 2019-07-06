@@ -1,40 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="horizontal" android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:gravity="center_vertical"
-    android:padding="@dimen/space10"
-    android:layout_marginRight="10dp">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.codingwithsara.musicplayer.MainActivity"
+    android:orientation="vertical"
+    android:gravity="center_horizontal">
+
+    <TextView
+        android:id="@+id/statoPlayer"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible" />
+
+    <ImageView
+        android:id="@+id/imgSpotify"
+        android:layout_width="163dp"
+        android:layout_height="114dp"
+        android:layout_marginTop="40dp"
+        android:contentDescription="image"
+        android:src="@drawable/spotify"
+        app:srcCompat="@drawable/spotify"
+        tools:srcCompat="@drawable/spotify" />
+
+    <!--<SeekBar
+        android:id="@+id/positionBar"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"/>
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="460dp"
-        android:layout_alignParentLeft="true"
-        android:gravity="center_vertical"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginRight="@dimen/space10"
-            android:src="@drawable/immagine_bot" />
-
-        <WebView
-            android:id="@+id/webView"
-            android:layout_width="267dp"
-            android:layout_height="445dp" />
-
+        android:layout_height="wrap_content">
         <TextView
-            android:id="@+id/tv_time"
+            android:id="@+id/elapsedTimeLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_centerVertical="true"
-            android:layout_marginLeft="@dimen/space10"
-            android:drawableLeft="@drawable/ic_clock"
-            android:drawablePadding="@dimen/space5"
-            android:text="5:04pm"
-            android:textAppearance="@style/ExtraLight"
-            android:textColor="@color/colorTextInfo"
-            android:textSize="@dimen/h4" />
+            android:text="0:11"
+            android:layout_marginLeft="40dp"/>
+        <TextView
+            android:id="@+id/remainingTimeLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="-1:49"
+            android:layout_marginLeft="240dp"/>
+    </LinearLayout>-->
+
+    <LinearLayout
+        android:layout_width="411dp"
+        android:layout_height="77dp"
+        android:layout_marginTop="30dp">
+
+
+        <Button
+            android:id="@+id/playBtn"
+            android:layout_width="41dp"
+            android:layout_height="38dp"
+            android:layout_marginLeft="100dp"
+            android:background="@drawable/play"
+            android:onClick="playBtnClick" />
+
+        <Button
+            android:id="@+id/playSkip"
+            android:layout_width="66dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="110dp"
+            android:background="@drawable/ic_next" />
     </LinearLayout>
-</RelativeLayout>
+
+</LinearLayout>

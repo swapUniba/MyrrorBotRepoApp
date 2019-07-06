@@ -1,1 +1,1 @@
-include ':app', ':YouTubeAndroidPlayerApi'
+include ':app', ':YouTubeAndroidPlayerApi', ':spotify-app-remote', ':spotify-auth-release'
