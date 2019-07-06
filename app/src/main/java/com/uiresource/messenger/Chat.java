@@ -507,7 +507,7 @@ public class Chat extends BaseActivity
 
                 } else {
                     Log.w("ANSWER",answer);
-
+                     answer = answer.replace("<br>", "\n");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
                     Date currentTime = Calendar.getInstance().getTime();
