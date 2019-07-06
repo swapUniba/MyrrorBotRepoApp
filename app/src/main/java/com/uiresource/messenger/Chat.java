@@ -117,14 +117,8 @@ public class Chat extends BaseActivity
         setupToolbarWithUpNav(R.id.toolbar, "Nome del bot", R.drawable.ic_action_back);
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},1024);
 
         //controllo permessi
-        if (ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.ACCESS_COARSE_LOCATION},1024);
-
-
-        }
 
         getDeviceLocation();
 

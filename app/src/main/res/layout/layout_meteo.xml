@@ -34,9 +34,10 @@
 
             <ImageView
                 android:id="@+id/imageViewWheater1"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="6dp"
 
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -71,9 +72,10 @@
 
             <ImageView
                 android:id="@+id/imageViewWheater2"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="6dp"
 
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -107,9 +109,10 @@
 
             <ImageView
                 android:id="@+id/imageViewWheater3"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="6dp"
 
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -143,9 +146,10 @@
 
             <ImageView
                 android:id="@+id/imageViewWheater4"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="6dp"
 
                 tools:srcCompat="@tools:sample/avatars" />
 
@@ -180,9 +184,10 @@
 
             <ImageView
                 android:id="@+id/imageViewWheater5"
-                android:layout_width="60dp"
-                android:layout_height="60dp"
-                android:layout_marginTop="50dp"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="60dp"
+                android:layout_marginLeft="6dp"
 
                 tools:srcCompat="@tools:sample/avatars" />
 
