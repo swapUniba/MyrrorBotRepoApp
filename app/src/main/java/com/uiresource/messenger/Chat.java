@@ -36,6 +36,7 @@ import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -82,6 +83,8 @@ public class Chat extends BaseActivity
     private EditText text;
     private Button send;
 
+    private TextView nomeUtente;
+
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -114,7 +117,7 @@ public class Chat extends BaseActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        setupToolbarWithUpNav(R.id.toolbar, "Nome del bot", R.drawable.ic_action_back);
+        setupToolbarWithUpNav(R.id.toolbar, "MyrrorBot", R.drawable.ic_action_back);//Nome Toolbar
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
@@ -201,8 +204,13 @@ public class Chat extends BaseActivity
             }
         });
 
+        //Imposto il nome dell'utente nel menu
+        nomeUtente = (TextView)findViewById(R.id.txtNomeUtente);
+        setNomeUtente();
 
-            //CODICE PER OTTENERE ACCESS TOKEN ------- UTILIZZI FUTURI
+
+
+            //CODICE PER OTTENERE ACCESS TOKEN SPOTIFY------- UTILIZZI FUTURI
             /*AuthenticationRequest.Builder builder =
                     new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
@@ -792,6 +800,129 @@ public class Chat extends BaseActivity
         }
 
 
+    }
+
+
+    public void setNomeUtente(){
+        BackgroundNomeUtente b = new BackgroundNomeUtente();
+        b.execute();
+
+    }
+
+
+    public class BackgroundNomeUtente extends AsyncTask<String, Void, ArrayList<String>> {
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        /**
+         * Operazioni effettuate dopo il Post
+         *
+         * @param s
+         */
+        @Override
+        protected void onPostExecute(ArrayList<String> s) {
+
+            try {
+
+                //Esempio valore JSON {"intentName":"Identita utente","confidence":1,"answer":"Ti chiami Cataldo Musto"}
+
+                String result = s.get(0);
+                String mess = s.get(1);
+
+                JSONObject arr = new JSONObject(result);
+
+                String answer = arr.getString("answer");
+                String intentName = arr.getString("intentName");
+                double confidence = Double.parseDouble(arr.getString("confidence"));
+
+                Log.e("INTENT", arr.toString());
+
+
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+
+        }
+
+        /**
+         * Operazioni da effettuare in background
+         *
+         * @param voids
+         * @return
+         */
+        @Override
+        protected ArrayList<String> doInBackground(String... voids) {
+
+
+            String mess = "Come mi chiamo";//Domanda dell'utente
+
+            String result = "";
+            String urlString = "http://myrrorbot.000webhostapp.com//php/intentDetection.php";
+
+            try {
+
+                //Imposto parametri per la connessione
+                URL url = new URL(urlString);
+                HttpURLConnection http = (HttpURLConnection) url.openConnection();
+                http.setRequestMethod("POST");
+                http.setDoInput(true);
+                http.setDoOutput(true);
+
+
+                OutputStream ops = http.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(ops,"UTF-8"));
+
+                String data = "";
+                data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mess), "UTF-8");
+
+                Log.i("data",data);
+
+
+                writer.write(data);
+                writer.flush();
+                writer.close();
+                ops.close();
+
+                InputStream ips = http.getInputStream();
+                BufferedReader reader = new BufferedReader(new InputStreamReader(ips, "ISO-8859-1"));
+
+                String line = "";
+
+                while ((line = reader.readLine()) != null) {
+                    result += line;
+
+
+                    reader.close();
+                    ips.close();
+                    http.disconnect();
+
+                }
+
+                ArrayList<String> arrayList = new ArrayList<>();
+                arrayList.add(result);
+                arrayList.add(mess);
+
+                return arrayList;
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            ArrayList<String> arrayList = new ArrayList<>();
+            arrayList.add(result);
+            arrayList.add(mess);
+
+            return arrayList;
+        }
     }
 
 

@@ -39,6 +39,7 @@ public class MainActivity extends BaseActivity
 
     TextView chats;
     TextView logout;
+    TextView nomeUtente;
     NavigationView navigationView, navigationViewBottom;
     DrawerLayout drawer;
 
@@ -68,6 +69,7 @@ public class MainActivity extends BaseActivity
         navigationViewBottom = (NavigationView) findViewById(R.id.nav_view_bottom);
         navigationViewBottom.setNavigationItemSelectedListener(this);
 
+        nomeUtente = (TextView) findViewById(R.id.txtNomeUtente);//Nome utente nel menu
 
         chats =(TextView) MenuItemCompat.getActionView(navigationView.getMenu().
                 findItem(R.id.nav_chats));
