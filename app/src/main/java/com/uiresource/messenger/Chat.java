@@ -85,6 +85,9 @@ public class Chat extends BaseActivity
 
     private TextView nomeUtente;
 
+    public String email;
+
+
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
     private static final String FINE_LOCATION = Manifest.permission.ACCESS_FINE_LOCATION;
@@ -121,8 +124,12 @@ public class Chat extends BaseActivity
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        //controllo permessi
+        if(getIntent().hasExtra("email")){
+            email = getIntent().getStringExtra("email");
 
+        }
+
+        //controllo permessi
         getDeviceLocation();
 
 
@@ -204,8 +211,12 @@ public class Chat extends BaseActivity
             }
         });
 
+        //Imposto il messaggio di benvenuto
+        setMessaggioBenvenuto();
+
         //Imposto il nome dell'utente nel menu
-        nomeUtente = (TextView)findViewById(R.id.txtNomeUtente);
+        View headerView = navigationView.getHeaderView(0);
+        nomeUtente = (TextView) headerView.findViewById(R.id.txtNomeUtente);
         setNomeUtente();
 
 
@@ -276,6 +287,8 @@ public class Chat extends BaseActivity
 
             //Elimino le credenziali dalle shared preferences
             PreferenceData.setUserLoggedInStatus(this,false);   // Imposto il login status
+            PreferenceData.clearLoggedInEmailAddress(this);
+
 
             Intent intent = new Intent(Chat.this,LoginActivity.class);
             startActivity(intent);
@@ -432,7 +445,7 @@ public class Chat extends BaseActivity
 
                     Resources res = getResources();
                     Drawable drawable = res.getDrawable(R.drawable.user4);
-                    String ora  ;
+                    String ora = ""  ;
                     int temp ;
 
                     if(answer.equals("")){
@@ -496,9 +509,13 @@ public class Chat extends BaseActivity
                                 break;
                         }
 
-                        Meteo m = new Meteo(temp,ora+":00",drawable);
-                        if(ora != null && Integer.parseInt(ora) > 6){
-                            item.list.add(m);
+
+                        if(!ora.equals("")){
+                            if(Integer.parseInt(ora.substring(0,2)) > 6){
+                                Meteo m = new Meteo(temp,ora,drawable);
+                                item.list.add(m);
+                            }
+
                         }
 
                     }
@@ -548,7 +565,7 @@ public class Chat extends BaseActivity
             String mess = voids[0];//Domanda dell'utente
 
             String result = "";
-            String urlString = "http://myrrorbot.000webhostapp.com//php/intentDetection.php";
+            String urlString = "http://90.147.102.243:8080/php/intentDetection.php";
 
             try {
 
@@ -565,11 +582,12 @@ public class Chat extends BaseActivity
 
                 String data = "";
                 if (city == null){
-                     data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8");
+                    data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
+                            +"&&mail="+URLEncoder.encode(email,"UTF-8");
                 }else {
                     //Stringa di output
-                     data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
-                            +"&&city="+URLEncoder.encode(city,"UTF-8");
+                    data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
+                            +"&&city="+URLEncoder.encode(city,"UTF-8")+"&&mail="+URLEncoder.encode(email,"UTF-8");
                 }
 
                 writer.write(data);
@@ -804,13 +822,30 @@ public class Chat extends BaseActivity
 
 
     public void setNomeUtente(){
-        BackgroundNomeUtente b = new BackgroundNomeUtente();
+        BackgroundUtente b = new BackgroundUtente();
         b.execute();
 
     }
 
+    public void setMessaggioBenvenuto(){
 
-    public class BackgroundNomeUtente extends AsyncTask<String, Void, ArrayList<String>> {
+
+        List<ChatData> data = new ArrayList<ChatData>();
+        ChatData item = new ChatData();
+        Date currentTime = Calendar.getInstance().getTime();
+        item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+        item.setType("2");//Imposto il layout della risposta, ovvero YOU
+        item.setText("Ciao! \uD83D\uDE04 Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.");
+        data.add(item);
+        mAdapter.addItem(data);
+        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+        text.setText("");
+
+    }
+
+
+
+    public class BackgroundUtente extends AsyncTask<String, Void, ArrayList<String>> {
 
         @Override
         protected void onPreExecute() {
@@ -824,26 +859,11 @@ public class Chat extends BaseActivity
         @Override
         protected void onPostExecute(ArrayList<String> s) {
 
-            try {
-
-                //Esempio valore JSON {"intentName":"Identita utente","confidence":1,"answer":"Ti chiami Cataldo Musto"}
-
                 String result = s.get(0);
                 String mess = s.get(1);
 
-                JSONObject arr = new JSONObject(result);
-
-                String answer = arr.getString("answer");
-                String intentName = arr.getString("intentName");
-                double confidence = Double.parseDouble(arr.getString("confidence"));
-
-                Log.e("INTENT", arr.toString());
-
-
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                //Imposto il nome sul menu
+                nomeUtente.setText(result);
 
         }
 
@@ -857,10 +877,11 @@ public class Chat extends BaseActivity
         protected ArrayList<String> doInBackground(String... voids) {
 
 
-            String mess = "Come mi chiamo";//Domanda dell'utente
+
+            String mess = "";//Domanda dell'utente
 
             String result = "";
-            String urlString = "http://myrrorbot.000webhostapp.com//php/intentDetection.php";
+            String urlString = "http://90.147.102.243:8080/php/setNominativo.php";
 
             try {
 
@@ -875,8 +896,9 @@ public class Chat extends BaseActivity
                 OutputStream ops = http.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(ops,"UTF-8"));
 
-                String data = "";
-                data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(mess), "UTF-8");
+
+                String data = "mail=" + URLEncoder.encode(email,"UTF-8");
+
 
                 Log.i("data",data);
 

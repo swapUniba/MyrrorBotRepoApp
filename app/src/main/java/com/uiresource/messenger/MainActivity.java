@@ -54,8 +54,6 @@ public class MainActivity extends BaseActivity
 
         }
 
-        //Avvio la schermata della chat con il bot
-        startActivity(new Intent(getApplicationContext(), Chat.class));
 
         drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         final ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -78,6 +76,27 @@ public class MainActivity extends BaseActivity
                 findItem(R.id.nav_logout));
 
         initializeCountDrawer();
+
+
+        //Avvio la schermata della chat con il bot
+        if(getIntent().hasExtra("email")){
+            String mail = getIntent().getStringExtra("email");
+            Log.i("Email Login",mail);
+
+            Intent intent = new Intent(getApplicationContext(),Chat.class);
+            intent.putExtra("email",mail);
+            startActivity(intent);
+        }else if(PreferenceData.getUserLoggedInStatus(this)){//L'utente è già loggato
+
+            String mail = PreferenceData.getLoggedInEmailUser(this);
+            Log.i("Email Login",mail);
+
+            Intent intent = new Intent(getApplicationContext(),Chat.class);
+            intent.putExtra("email",mail);
+            startActivity(intent);
+        }else {//Errore
+            Log.i("ERRORE LOGIN","Impossibile reperire i dati");
+        }
 
     }
 
@@ -132,6 +151,7 @@ public class MainActivity extends BaseActivity
 
             //Elimino le credenziali dalle shared preferences
             PreferenceData.setUserLoggedInStatus(this,false);   // Imposto il login status
+            PreferenceData.clearLoggedInEmailAddress(this);
 
             Intent intent = new Intent(MainActivity.this, LoginActivity.class);
             startActivity(intent);

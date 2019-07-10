@@ -397,6 +397,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 //Salvo le credenziali dalle shared preferences
                 PreferenceData.setUserLoggedInStatus(getApplicationContext(),true);   // Imposto il login status
+                PreferenceData.setLoggedInUserEmail(getApplicationContext(),mEmail);
 
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class); //Lo conduco alla Home
                 intent.putExtra("email",mEmail);
