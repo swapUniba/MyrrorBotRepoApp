@@ -90,6 +90,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private View mProgressView;
     private View mLoginFormView;
 
+    private TextView txtGuest;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +99,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.etEmail);
         populateAutoComplete();
+
+        txtGuest = (TextView) findViewById(R.id.txtGuest);
 
         mPasswordView = (EditText) findViewById(R.id.etPassword);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -107,6 +111,14 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                     return true;
                 }
                 return false;
+            }
+        });
+
+        txtGuest.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), ChatGuest.class));
+                finish();
             }
         });
 

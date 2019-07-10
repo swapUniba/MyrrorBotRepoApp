@@ -180,10 +180,6 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
         ArrayList<Meteo> listMeteo = items.get(position).list;
         vh1.init(listMeteo);
-        /*
-        ArrayAdapter<Meteo> adapter = new ArrayAdapter<Meteo>(this, R.layout.listItemMeteo,listMeteo);
-        list.setAdapter(adapter);
-        */
 
     }
 
@@ -217,7 +213,12 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
     private void configureViewHolder3(HolderMe vh1, int position) {
             vh1.getTime().setText(items.get(position).getTime());
-            vh1.getChatText().setText(items.get(position).getText());
+            //vh1.getChatText().setText(items.get(position).getText());
+        try {
+            vh1.getChatText().setText(new String(items.get(position).getText().getBytes("ISO-8859-1"),"UTF-8"));
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
     }
 
     private void configureViewHolder2(HolderYou vh1, int position) {

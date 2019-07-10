@@ -7,6 +7,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:ignore="VectorDrawableCompat"
+    android:orientation="vertical"
     tools:context=".MainActivity">
 
     <ProgressBar
@@ -166,12 +167,24 @@
                 android:id="@+id/rl"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:transitionName="circleTes"
                 android:layout_alignTop="@+id/cv"
                 android:layout_alignRight="@+id/cv"
                 android:layout_marginTop="-20dp"
                 android:layout_marginRight="-20dp"
-                android:elevation="10dp"/>
+                android:elevation="10dp"
+                android:transitionName="circleTes" >
+
+
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/txtGuest"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="300dp"
+                android:layout_marginLeft="120dp"
+                android:text="Accedi come Guest"
+                android:textSize="18sp" />
 
             <RelativeLayout
                 android:layout_width="wrap_content"
@@ -189,11 +202,12 @@
                     android:id="@+id/btLogin"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
                     android:background="@drawable/bt_uisquare"
                     android:text="Login"
                     android:textAllCaps="false"
                     android:textColor="@color/colorWhite" />
+
+
             </RelativeLayout>
 
 

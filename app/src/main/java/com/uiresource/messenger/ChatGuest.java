@@ -79,7 +79,7 @@ import java.util.StringTokenizer;
 
 import static com.spotify.sdk.android.authentication.LoginActivity.REQUEST_CODE;
 
-public class Chat extends BaseActivity
+public class ChatGuest extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private RecyclerView mRecyclerView;
@@ -120,7 +120,7 @@ public class Chat extends BaseActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_chat);
+        setContentView(R.layout.activity_chat_guest);
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -229,7 +229,7 @@ public class Chat extends BaseActivity
         setLogoUtente();
 
 
-            //CODICE PER OTTENERE ACCESS TOKEN SPOTIFY------- UTILIZZI FUTURI
+        //CODICE PER OTTENERE ACCESS TOKEN SPOTIFY------- UTILIZZI FUTURI
             /*AuthenticationRequest.Builder builder =
                     new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
 
@@ -289,7 +289,7 @@ public class Chat extends BaseActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_chats) {
-            Intent intent = new Intent(Chat.this,Chat.class);
+            Intent intent = new Intent(ChatGuest.this,ChatGuest.class);
             startActivity(intent);
         } else if (id == R.id.nav_logout) {
 
@@ -298,7 +298,7 @@ public class Chat extends BaseActivity
             PreferenceData.clearLoggedInEmailAddress(this);
 
 
-            Intent intent = new Intent(Chat.this,LoginActivity.class);
+            Intent intent = new Intent(ChatGuest.this,LoginActivity.class);
             startActivity(intent);
         }
 
@@ -339,7 +339,7 @@ public class Chat extends BaseActivity
 
 
                 //YOUTUBE --> Valori soglia diversi
-                if(intentName.equalsIgnoreCase("Video in base alle emozioni") || intentName.equalsIgnoreCase("Ricerca Video")){
+                if(intentName.equalsIgnoreCase("Ricerca Video")){
 
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
@@ -355,24 +355,6 @@ public class Chat extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
-
-                }else if (intentName.equalsIgnoreCase("Interessi")  //INTENT GENERICI
-                            || intentName.equalsIgnoreCase("Contatti")
-                            || intentName.equalsIgnoreCase("Esercizio fisico")
-                            || intentName.equalsIgnoreCase("Personalita")) {
-
-                    Log.w("ANSWER",answer);
-
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("1");
-
-                    item.setText(answer);
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                 }else if (intentName.equalsIgnoreCase("Canzone per nome")
                         || intentName.equalsIgnoreCase("Canzone per nome subintent")
@@ -397,13 +379,7 @@ public class Chat extends BaseActivity
 
 
                 }else if (intentName.equalsIgnoreCase("Canzoni in base al genere")
-                        || intentName.equalsIgnoreCase("Canzoni in base al genere subintent")
-                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni")
-                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni subintent")
-                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni")
-                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni subintent")
-                        || intentName.equalsIgnoreCase("Canzoni personalizzate")
-                        || intentName.equalsIgnoreCase("Canzoni personalizzate subintent")) {
+                        || intentName.equalsIgnoreCase("Canzoni in base al genere subintent")) {
 
                     Log.w("ANSWER",answer);
 
@@ -422,7 +398,7 @@ public class Chat extends BaseActivity
                     spotifyAppRemote = item.getmSpotifyAppRemote();
 
 
-                }else if(intentName.equals("Notizie in base ad un argomento") || intentName.equals("Notizie in base agli interessi")
+                }else if(intentName.equals("Notizie in base ad un argomento")
                         || intentName.equals("Notizie odierne")  || intentName.equals("Ricerca articolo") ){
                     JSONObject news = new JSONObject(answer);
                     String url = news.getString("url");
@@ -538,9 +514,9 @@ public class Chat extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
 
-                }  else {
+                } else {
                     Log.w("ANSWER",answer);
-                     answer = answer.replace("<br>", "\n");
+                    answer = answer.replace("<br>", "\n");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
                     Date currentTime = Calendar.getInstance().getTime();
@@ -573,7 +549,7 @@ public class Chat extends BaseActivity
             String mess = voids[0];//Domanda dell'utente
 
             String result = "";
-            String urlString = "http://90.147.102.243:8080/php/intentDetection.php";
+            String urlString = "http://90.147.102.243:8080/php/intentGuest.php";
 
             try {
 
@@ -590,12 +566,11 @@ public class Chat extends BaseActivity
 
                 String data = "";
                 if (city == null){
-                    data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
-                            +"&&mail="+URLEncoder.encode(email,"UTF-8");
+                    data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8");
                 }else {
                     //Stringa di output
                     data = URLEncoder.encode("testo", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(voids[0]), "UTF-8")
-                            +"&&city="+URLEncoder.encode(city,"UTF-8")+"&&mail="+URLEncoder.encode(email,"UTF-8");
+                            +"&&city="+URLEncoder.encode(city,"UTF-8");
                 }
 
                 writer.write(data);
@@ -830,14 +805,15 @@ public class Chat extends BaseActivity
 
 
     public void setNomeUtente(){
-        BackgroundUtente b = new BackgroundUtente();
-        b.execute();
+        /*BackgroundUtente b = new BackgroundUtente();
+        b.execute();*/
+        nomeUtente.setText("Nome utente");
 
     }
 
     public void setLogoUtente(){
-        BackgroundLogoUtente b = new BackgroundLogoUtente();
-        b.execute();
+        /*BackgroundLogoUtente b = new BackgroundLogoUtente();
+        b.execute();*/
     }
 
     public void setMessaggioBenvenuto(){
@@ -871,11 +847,11 @@ public class Chat extends BaseActivity
         @Override
         protected void onPostExecute(ArrayList<String> s) {
 
-                String result = s.get(0);
-                String mess = s.get(1);
+            String result = s.get(0);
+            String mess = s.get(1);
 
-                //Imposto il nome sul menu
-                nomeUtente.setText(result);
+            //Imposto il nome sul menu
+            nomeUtente.setText(result);
 
         }
 
