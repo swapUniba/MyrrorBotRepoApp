@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.youtube.player.YouTubePlayer;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
@@ -27,7 +28,24 @@ import retrofit.RetrofitError;
 import retrofit.client.Response;
 
 public class ChatData {
-    String type, text, time;
+    String type, text, time, spiegazione, spiegazioneNews;
+
+    public void setSpiegazione(String spiegazione) {
+        this.spiegazione = spiegazione;
+    }
+
+    public String getSpiegazione() {
+        return spiegazione;
+    }
+
+    public void setSpiegazioneNews(String spiegazioneNews) {
+        this.spiegazioneNews = spiegazioneNews;
+
+    }
+
+    public String getSpiegazioneNews() {
+        return spiegazioneNews;
+    }
 
     public String getText() {
         return text;
@@ -250,8 +268,12 @@ public class ChatData {
 
         }else if(this.getFlag() == 1){//Playlist
 
-            String url = urlSpotify.substring(34);//Id playlist, es. 37i9dQZF1DWTh5RC6ek3nb
+            String url = urlSpotify.substring(40);//Id playlist, es. 37i9dQZF1DWTh5RC6ek3nb
             Log.i("url",url);
+
+            if (spiegazione != ""){
+                holderSpotify.spiegazione.setText(getSpiegazione());
+            }
 
             // Play a playlist
             mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:" + url);
@@ -263,6 +285,8 @@ public class ChatData {
                         final Track track = playerState.track;
                         if (track != null) {
                             Log.d("MainActivity", track.name + " by " + track.artist.name);
+                            holderSpotify.txtTitolo.setText(track.name);
+                            holderSpotify.txtNomeArtista.setText(track.artist.name);
                         }
                     });
 
@@ -273,4 +297,6 @@ public class ChatData {
 
 
     }
+
+
 }

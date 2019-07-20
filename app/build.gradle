@@ -61,6 +61,7 @@ dependencies {
     implementation 'com.github.kaaes:spotify-web-api-android:0.4.1'
     implementation 'com.spotify.android:auth:1.1.0'
 
+
     //Google maps
     implementation 'com.google.android.gms:play-services-maps:16.0.0'
     implementation "com.google.android.gms:play-services-location:15.0.1"

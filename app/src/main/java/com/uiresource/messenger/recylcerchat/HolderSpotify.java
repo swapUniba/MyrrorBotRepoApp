@@ -1,6 +1,7 @@
 package com.uiresource.messenger.recylcerchat;
 
 import android.media.MediaPlayer;
+import android.media.session.PlaybackState;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -56,13 +57,19 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
     Track track;
     SpotifyService spotify;
 
+    TextView txtTitolo, txtNomeArtista, spiegazione;
+
 
     private SpotifyAppRemote mSpotifyAppRemote;
+    private PlayerState playerState;
+
 
     public HolderSpotify(View v) {
         super(v);
 
         imgSpotify = (ImageView) v.findViewById(R.id.imgSpotify);
+
+        spiegazione = (TextView) v.findViewById(R.id.txtSpiegazione);
 
         playBtn = (Button) v.findViewById(R.id.playBtn);
         //elapsedTimeLabel = (TextView) v.findViewById(R.id.elapsedTimeLabel);
@@ -72,8 +79,11 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
 
         statoPlayer = (TextView) v.findViewById(R.id.statoPlayer);
         statoPlayer.setText("1"); //Stato del player = IN RIPRODUZIONE
-        playBtn.setBackgroundResource(R.drawable.stop); //Mostro il button per la pausa
+        playBtn.setBackgroundResource(R.drawable.stop); //Mostro il button per lo stop
 
+
+        txtTitolo = (TextView) v.findViewById(R.id.txtTitolo);
+        txtNomeArtista = (TextView) v.findViewById(R.id.txtNomeArtista);
 
         playBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -248,9 +258,25 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
 
         mSpotifyAppRemote = getmSpotifyAppRemote();//Prendo il collegamento del player di Spotify
 
+        mSpotifyAppRemote.getPlayerApi().getPlayerState().setResultCallback(playerState -> {
+            if (playerState.isPaused) {
+                playBtn.setBackgroundResource(R.drawable.stop); //Mostro il button per la pausa
+                mSpotifyAppRemote.getPlayerApi()
+                        .resume();
+                Log.i("Player", "IN RIPRODUZIONE");
+
+            } else {
+                playBtn.setBackgroundResource(R.drawable.play); //Mostro il button per la pausa
+                mSpotifyAppRemote.getPlayerApi()
+                        .pause();
+                Log.i("Player", "IN PAUSA");
+
+            }
+        });
 
 
-        if (statoPlayer.getText().toString().equalsIgnoreCase("0")){//Faccio partire la canzone
+
+        /*if (statoPlayer.getText().toString().equalsIgnoreCase("0")){//Faccio partire la canzone
             Log.i("Player", "IN RIPRODUZIONE");
             mSpotifyAppRemote.getPlayerApi().resume();
             playBtn.setBackgroundResource(R.drawable.stop); //Mostro il button per la pausa
@@ -260,7 +286,7 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
             playBtn.setBackgroundResource(R.drawable.play); //Mostro il button per la pausa
             Log.i("Player", "IN PAUSA");
             statoPlayer.setText("0");
-        }
+        }*/
 
 
 
@@ -270,6 +296,12 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
 
         mSpotifyAppRemote = getmSpotifyAppRemote();//Prendo il collegamento del player di Spotify
         mSpotifyAppRemote.getPlayerApi().skipNext();
+
+        Log.i("Player", "IN RIPRODUZIONE");
+
+        mSpotifyAppRemote.getPlayerApi().resume();
+        playBtn.setBackgroundResource(R.drawable.stop); //Mostro il button per la pausa
+        statoPlayer.setText("1");
 
     }
 

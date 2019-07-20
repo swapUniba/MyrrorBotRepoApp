@@ -30,6 +30,8 @@ import com.spotify.protocol.types.PlayerState;
 import com.spotify.protocol.types.Track;
 import com.uiresource.messenger.WebActivity;
 
+import org.json.JSONObject;
+
 
 public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -174,6 +176,14 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         });
         vh1.setImgBack(items.get(position).getImg());
         vh1.getChatText().setText(items.get(position).getText());
+        vh1.getTxtSpiegazioneNews().setText("");
+
+        if (items.get(position).getSpiegazioneNews() != ""){
+            vh1.getTxtSpiegazioneNews().setText(items.get(position).getSpiegazioneNews());
+            vh1.getTxtSpiegazioneNews().setVisibility(View.VISIBLE);
+        }else {
+            vh1.getTxtSpiegazioneNews().setVisibility(View.GONE);
+        }
     }
 
     private void configureViewHolder4(holderMeteo vh1, int position) {
@@ -184,12 +194,15 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void configureViewHolder7(HolderSpotifySingleTrack vh1, int position) {
+
+
         vh1.getChatText().setText(items.get(position).getText());
 
         vh1.getChatText().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 String url = items.get(position).getText();
+
                 Intent i = new Intent(Intent.ACTION_VIEW);
                 i.setData(Uri.parse(url));
                 mContext.startActivity(i);

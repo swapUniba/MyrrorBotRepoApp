@@ -13,7 +13,7 @@ import com.uiresource.messenger.R;
 import java.io.InputStream;
 
 public class HolderNews extends RecyclerView.ViewHolder {
-    private TextView time, chatText;
+    private TextView time, chatText, txtSpiegazioneNews;
     private ImageView immagine;
     public View v;
 
@@ -24,6 +24,8 @@ public class HolderNews extends RecyclerView.ViewHolder {
         immagine = (ImageView) v.findViewById(R.id.imageViewNews);
         chatText = (TextView) v.findViewById(R.id.tv_chat_text);
         this.v = v;
+
+        txtSpiegazioneNews = (TextView) v.findViewById(R.id.txtSpiegazioneNews);
     }
 
     public TextView getTime() {
@@ -44,6 +46,13 @@ public class HolderNews extends RecyclerView.ViewHolder {
 
     }
 
+    public TextView getTxtSpiegazioneNews() {
+        return txtSpiegazioneNews;
+    }
+
+    public void setTxtSpiegazioneNews(TextView txtSpiegazioneNews) {
+        this.txtSpiegazioneNews = txtSpiegazioneNews;
+    }
 
     public ImageView getImg(){
         return immagine;

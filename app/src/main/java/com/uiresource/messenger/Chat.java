@@ -92,6 +92,8 @@ public class Chat extends BaseActivity
 
     public String email;
 
+    private TextView txtContesto;//per il cambia
+
 
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
@@ -133,6 +135,9 @@ public class Chat extends BaseActivity
             email = getIntent().getStringExtra("email");
 
         }
+
+        txtContesto = (TextView) findViewById(R.id.txtContesto);
+        txtContesto.setText("");
 
         //controllo permessi
         getDeviceLocation();
@@ -197,8 +202,46 @@ public class Chat extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     text.setText("");
-                    Background b = new Background();
-                    b.execute(mess);
+
+
+
+                    if (mess.equalsIgnoreCase("cambia")|| mess.equalsIgnoreCase("cambio") ||mess.equalsIgnoreCase("dammi un'altra") ||
+                            mess.equalsIgnoreCase("leggi un'altra") ||mess.equalsIgnoreCase("dammene un'altra") ||mess.equalsIgnoreCase("leggine un'altra") ||
+                            mess.equalsIgnoreCase("leggi altra news") ||mess.equalsIgnoreCase("altra canzone") ||mess.equalsIgnoreCase("dimmi un'altra") ||
+                            mess.equalsIgnoreCase("riproducine un'altra") ||mess.equalsIgnoreCase("cambia video") ||mess.equalsIgnoreCase("fammi vedere un altro") ||
+                            mess.equalsIgnoreCase("dammi un altro") ||mess.equalsIgnoreCase("altro video") ||mess.equalsIgnoreCase("altra canzone") ||
+                            mess.equalsIgnoreCase("altra news") ){
+
+                        mess =  txtContesto.getText().toString(); //Prendo l'ultimo domanda
+
+                        if (mess != ""){
+                            Log.i("DOMANDA RECUPERATA",mess);
+
+                            Background b = new Background();
+                            b.execute(mess);
+                        }else {
+                            data = new ArrayList<ChatData>();
+                            item = new ChatData();
+                            currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("1");
+
+                            item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
+
+
+                    }else{
+                        txtContesto.setText(mess);//Imposto la domanda
+                        Log.i("DOMANDA DA SALVARE",txtContesto.getText().toString());
+                        Background b = new Background();
+                        b.execute(mess);
+                    }
+
+
+
                 }
             }
         });
@@ -374,78 +417,151 @@ public class Chat extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
-                }else if (intentName.equalsIgnoreCase("Canzone per nome")
-                        || intentName.equalsIgnoreCase("Canzone per nome subintent")
-                        || intentName.equalsIgnoreCase("Canzone per artista")
-                        || intentName.equalsIgnoreCase("Canzone per artista subintent")){
-
+                }else if (intentName.equalsIgnoreCase("Musica")){
                     Log.w("ANSWER",answer);
 
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("7");
+                    if (answer.contains("track")){
+                        Log.w("ANSWER","brano");
 
-                    item.setText(answer);
-                    item.setFlag(0);//Indico che è una canzone
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        JSONObject answerOb = arr.getJSONObject("answer");
+                        String urlO = answerOb.getString("url");
+                        String explainO = answerOb.getString("explain");
+                        Log.i("urlO",urlO);
+                        Log.i("explainO",explainO);
 
-                    spotifyAppRemote = item.getmSpotifyAppRemote();
+                        if (explainO != ""){
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("7");
+
+                            item.setText(urlO);
+                            item.setFlag(0);//Indico che è una canzone
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
+
+                        }else {
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("7");
+
+                            item.setText(urlO);
+                            item.setFlag(0);//Indico che è una canzone
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
+                        }
 
 
-                }else if (intentName.equalsIgnoreCase("Canzoni in base al genere")
-                        || intentName.equalsIgnoreCase("Canzoni in base al genere subintent")
-                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni")
-                        || intentName.equalsIgnoreCase("Playlist di canzoni in base alle emozioni subintent")
-                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni")
-                        || intentName.equalsIgnoreCase("Canzoni in base alle emozioni subintent")
-                        || intentName.equalsIgnoreCase("Canzoni personalizzate")
-                        || intentName.equalsIgnoreCase("Canzoni personalizzate subintent")) {
+                    }else {
+                        Log.w("ANSWER","playlist");
 
-                    Log.w("ANSWER",answer);
+                        JSONObject answerOb = arr.getJSONObject("answer");
+                        String urlO = answerOb.getString("url");
+                        String explainO = answerOb.getString("explain");
+                        Log.i("urlO",urlO);
+                        Log.i("explainO",explainO);
 
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("5");
+                        if (explainO != ""){
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
 
-                    item.setText(answer);
-                    item.setFlag(1);//Indico che è una playlist
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            item.setType("5");
 
-                    spotifyAppRemote = item.getmSpotifyAppRemote();
+                            item.setText(urlO);
+                            item.setFlag(1);//Indico che è una playlist
+                            item.setSpiegazione(explainO);//Spiegazione
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
 
 
-                }else if(intentName.equals("Notizie in base ad un argomento") || intentName.equals("Notizie in base agli interessi")
-                        || intentName.equals("Notizie odierne")  || intentName.equals("Ricerca articolo") ){
+
+
+                        }else {
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("5");
+
+                            item.setText(urlO);
+                            item.setFlag(1);//Indico che è una playlist
+                            item.setSpiegazione("");//Spiegazione
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
+
+                        }
+
+
+                    }
+
+                } else if(intentName.equals("News")){
                     JSONObject news = new JSONObject(answer);
                     String url = news.getString("url");
                     String img = news.getString("image");
                     String title = news.getString("title");
-                    answer = title;
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-
-                    item.setImg(img);
-                    item.setType("3");
-
-                    item.setText(url);
-
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
+                    try {//Se è presente explain
+                        String explain = news.getString("explain");
+                        Log.i("SPIEGAZIONE NEWS",explain);
 
-                } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo")){
+                        answer = title;
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+
+                        item.setImg(img);
+                        item.setType("3");
+
+                        item.setText(url);
+                        item.setSpiegazioneNews(explain);
+
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    }catch (JSONException e){
+                        answer = title;
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+
+                        item.setImg(img);
+                        item.setType("3");
+
+                        item.setText(url);
+                        item.setSpiegazioneNews("");
+
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
+
+
+
+
+
+
+                } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
 
@@ -553,6 +669,8 @@ public class Chat extends BaseActivity
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                 }
+
+
 
 
             } catch (JSONException e) {
@@ -849,6 +967,7 @@ public class Chat extends BaseActivity
         item.setType("3");//Imposto il layout della risposta, ovvero YOU
         item.setText("Ciao! \uD83D\uDE04 Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.");
         data.add(item);
+        item.setSpiegazioneNews("");
         mAdapter.addItem(data);
         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
         text.setText("");
@@ -1084,5 +1203,9 @@ public class Chat extends BaseActivity
         }
 
     }
+
+
+
+
 
 }
