@@ -557,10 +557,6 @@ public class Chat extends BaseActivity
                     }
 
 
-
-
-
-
                 } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();

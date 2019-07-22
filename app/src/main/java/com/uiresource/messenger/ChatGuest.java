@@ -92,6 +92,9 @@ public class ChatGuest extends BaseActivity
 
     public String email;
 
+    private TextView txtContestoGuest;//per il cambia
+
+
 
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
@@ -137,6 +140,8 @@ public class ChatGuest extends BaseActivity
         //controllo permessi
         getDeviceLocation();
 
+        txtContestoGuest = (TextView)findViewById(R.id.txtContestoGuest);
+        txtContestoGuest.setText("");
 
         //Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -197,8 +202,40 @@ public class ChatGuest extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     text.setText("");
-                    Background b = new Background();
-                    b.execute(mess);
+                    if (mess.equalsIgnoreCase("cambia")|| mess.equalsIgnoreCase("cambio") ||mess.equalsIgnoreCase("dammi un'altra") ||
+                            mess.equalsIgnoreCase("leggi un'altra") ||mess.equalsIgnoreCase("dammene un'altra") ||mess.equalsIgnoreCase("leggine un'altra") ||
+                            mess.equalsIgnoreCase("leggi altra news") ||mess.equalsIgnoreCase("altra canzone") ||mess.equalsIgnoreCase("dimmi un'altra") ||
+                            mess.equalsIgnoreCase("riproducine un'altra") ||mess.equalsIgnoreCase("cambia video") ||mess.equalsIgnoreCase("fammi vedere un altro") ||
+                            mess.equalsIgnoreCase("dammi un altro") ||mess.equalsIgnoreCase("altro video") ||mess.equalsIgnoreCase("altra canzone") ||
+                            mess.equalsIgnoreCase("altra news") ){
+
+                        mess =  txtContestoGuest.getText().toString(); //Prendo l'ultimo domanda
+
+                        if (mess != ""){
+                            Log.i("DOMANDA RECUPERATA",mess);
+
+                            Background b = new Background();
+                            b.execute(mess);
+                        }else {
+                            data = new ArrayList<ChatData>();
+                            item = new ChatData();
+                            currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("1");
+
+                            item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
+
+
+                    }else{
+                        txtContestoGuest.setText(mess);//Imposto la domanda
+                        Log.i("DOMANDA DA SALVARE",txtContestoGuest.getText().toString());
+                        Background b = new Background();
+                        b.execute(mess);
+                    }
                 }
             }
         });
@@ -328,6 +365,8 @@ public class ChatGuest extends BaseActivity
 
                 String result = s.get(0);
                 String mess = s.get(1);
+                Log.i("RESULT",result);
+
 
                 JSONObject arr = new JSONObject(result);
 
@@ -335,11 +374,10 @@ public class ChatGuest extends BaseActivity
                 String intentName = arr.getString("intentName");
                 double confidence = Double.parseDouble(arr.getString("confidence"));
 
-                Log.e("INTENT", arr.toString());
-
 
                 //YOUTUBE --> Valori soglia diversi
                 if(intentName.equalsIgnoreCase("Ricerca Video")){
+
 
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
@@ -356,72 +394,121 @@ public class ChatGuest extends BaseActivity
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
-                }else if (intentName.equalsIgnoreCase("Canzone per nome")
-                        || intentName.equalsIgnoreCase("Canzone per nome subintent")
-                        || intentName.equalsIgnoreCase("Canzone per artista")
-                        || intentName.equalsIgnoreCase("Canzone per artista subintent")){
-
+                }else if (intentName.equalsIgnoreCase("Musica")){
                     Log.w("ANSWER",answer);
 
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("7");
+                    JSONObject answerOb = arr.getJSONObject("answer");
+                    String urlO = answerOb.getString("url");
 
-                    item.setText(answer);
-                    item.setFlag(0);//Indico che è una canzone
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    if (!urlO.isEmpty()){
+                        if (answer.contains("track")){
+                            Log.w("ANSWER","brano");
 
-                    spotifyAppRemote = item.getmSpotifyAppRemote();
-
-
-                }else if (intentName.equalsIgnoreCase("Canzoni in base al genere")
-                        || intentName.equalsIgnoreCase("Canzoni in base al genere subintent")) {
-
-                    Log.w("ANSWER",answer);
-
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("5");
-
-                    item.setText(answer);
-                    item.setFlag(1);//Indico che è una playlist
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                    spotifyAppRemote = item.getmSpotifyAppRemote();
+                             answerOb = arr.getJSONObject("answer");
+                             urlO = answerOb.getString("url");
+                            //String explainO = answerOb.getString("explain");
+                            Log.i("urlO",urlO);
+                            //Log.i("explainO",explainO);
 
 
-                }else if(intentName.equals("Notizie in base ad un argomento")
-                        || intentName.equals("Notizie odierne")  || intentName.equals("Ricerca articolo") ){
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("7");
+
+                            item.setText(urlO);
+                            item.setFlag(0);//Indico che è una canzone
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
+
+
+
+                        }else {
+                            Log.w("ANSWER","playlist");
+
+                             answerOb = arr.getJSONObject("answer");
+                             urlO = answerOb.getString("url");
+                            String explainO = answerOb.getString("explain");
+                            Log.i("urlO",urlO);
+                            Log.i("explainO",explainO);
+
+
+                            List<ChatData> data = new ArrayList<ChatData>();
+                            ChatData item = new ChatData();
+                            Date currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("5");
+
+                            item.setText(urlO);
+                            item.setFlag(1);//Indico che è una playlist
+                            item.setSpiegazione("");//Spiegazione
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            spotifyAppRemote = item.getmSpotifyAppRemote();
+
+
+
+                        }
+                    }else {
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item.setType("1");
+
+                        item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
+
+
+
+                } else if(intentName.equals("News")){
                     JSONObject news = new JSONObject(answer);
                     String url = news.getString("url");
                     String img = news.getString("image");
                     String title = news.getString("title");
-                    answer = title;
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
 
-                    item.setImg(img);
-                    item.setType("3");
+                    if (!url.isEmpty()){
+                        answer = title;
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
 
-                    item.setText(url);
+                        item.setImg(img);
+                        item.setType("3");
 
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        item.setText(url);
+                        item.setSpiegazioneNews("");
+
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }else {
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item.setType("1");
+
+                        item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
 
 
-                } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo")){
+
+                }else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
 
@@ -516,14 +603,13 @@ public class ChatGuest extends BaseActivity
 
                 } else {
                     Log.w("ANSWER",answer);
-                    answer = answer.replace("<br>", "\n");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
                     Date currentTime = Calendar.getInstance().getTime();
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
 
-                    item.setText(answer);
+                    item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -824,6 +910,7 @@ public class ChatGuest extends BaseActivity
         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
         item.setType("3");//Imposto il layout della risposta, ovvero YOU
         item.setText("Ciao! \uD83D\uDE04 Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.");
+        item.setSpiegazioneNews("");
         data.add(item);
         mAdapter.addItem(data);
         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);

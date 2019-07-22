@@ -264,33 +264,62 @@ public class ChatData {
 
 
 
-
-
         }else if(this.getFlag() == 1){//Playlist
 
-            String url = urlSpotify.substring(40);//Id playlist, es. 37i9dQZF1DWTh5RC6ek3nb
-            Log.i("url",url);
+            String url = "";
+            if (urlSpotify.contains("playlist")){
+                url = urlSpotify.substring(40);//Id playlist, es. 37i9dQZF1DWTh5RC6ek3nb
 
-            if (spiegazione != ""){
-                holderSpotify.spiegazione.setText(getSpiegazione());
+                Log.i("url",url);
+
+                if (spiegazione != ""){
+                    holderSpotify.spiegazione.setText(getSpiegazione());
+                }
+
+                // Play a playlist
+                mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:" + url);
+
+                // Subscribe to PlayerState
+                mSpotifyAppRemote.getPlayerApi()
+                        .subscribeToPlayerState()
+                        .setEventCallback(playerState -> {
+                            final Track track = playerState.track;
+                            if (track != null) {
+                                Log.d("MainActivity", track.name + " by " + track.artist.name);
+                                holderSpotify.txtTitolo.setText(track.name);
+                                holderSpotify.txtNomeArtista.setText(track.artist.name);
+                            }
+                        });
+
+                holderSpotify.setmSpotifyAppRemote(mSpotifyAppRemote);//Imposto il player di spotify
+            }else {
+                url = urlSpotify.substring(37);//Id album, es. 37i9dQZF1DWTh5RC6ek3nb
+
+                Log.i("url",url);
+
+                if (spiegazione != ""){
+                    holderSpotify.spiegazione.setText(getSpiegazione());
+                }
+
+                // Play a playlist
+                mSpotifyAppRemote.getPlayerApi().play("spotify:album:" + url);
+
+                // Subscribe to PlayerState
+                mSpotifyAppRemote.getPlayerApi()
+                        .subscribeToPlayerState()
+                        .setEventCallback(playerState -> {
+                            final Track track = playerState.track;
+                            if (track != null) {
+                                Log.d("MainActivity", track.name + " by " + track.artist.name);
+                                holderSpotify.txtTitolo.setText(track.name);
+                                holderSpotify.txtNomeArtista.setText(track.artist.name);
+                            }
+                        });
+
+                holderSpotify.setmSpotifyAppRemote(mSpotifyAppRemote);//Imposto il player di spotify
             }
 
-            // Play a playlist
-            mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:" + url);
 
-            // Subscribe to PlayerState
-            mSpotifyAppRemote.getPlayerApi()
-                    .subscribeToPlayerState()
-                    .setEventCallback(playerState -> {
-                        final Track track = playerState.track;
-                        if (track != null) {
-                            Log.d("MainActivity", track.name + " by " + track.artist.name);
-                            holderSpotify.txtTitolo.setText(track.name);
-                            holderSpotify.txtNomeArtista.setText(track.artist.name);
-                        }
-                    });
-
-            holderSpotify.setmSpotifyAppRemote(mSpotifyAppRemote);//Imposto il player di spotify
 
         }
 
