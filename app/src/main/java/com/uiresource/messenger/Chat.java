@@ -380,6 +380,20 @@ public class Chat extends BaseActivity
 
                 Log.e("INTENT", arr.toString());
 
+                if(answer.indexOf("Purtroppo non ho capito la domanda") != -1 || confidence < 0.6 || answer.indexOf("sfortunatamente") != -1 || answer.equals("")){
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    item.setText(answer);
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    return;
+
+                }
 
                 //YOUTUBE --> Valori soglia diversi
                 if(intentName.equalsIgnoreCase("Video in base alle emozioni") || intentName.equalsIgnoreCase("Ricerca Video")){
@@ -557,11 +571,9 @@ public class Chat extends BaseActivity
                     }
 
 
-
-
-
-
                 } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
+
+
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
 

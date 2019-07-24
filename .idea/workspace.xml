@@ -6,11 +6,7 @@
     </configurations>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b63b207a-6504-4c2c-8862-f96dd7105d04" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/YouTubeAndroidPlayerApi/YouTubeAndroidPlayerApi.iml" beforeDir="false" afterPath="$PROJECT_DIR$/YouTubeAndroidPlayerApi/YouTubeAndroidPlayerApi.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/app/app.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/local.properties" beforeDir="false" afterPath="$PROJECT_DIR$/local.properties" afterDir="false" />
-    </list>
+    <list default="true" id="b63b207a-6504-4c2c-8862-f96dd7105d04" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
