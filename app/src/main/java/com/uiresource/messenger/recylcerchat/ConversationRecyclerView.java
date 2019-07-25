@@ -39,7 +39,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     private List<ChatData> items;
     private Context mContext;
 
-    private final int DATE = 0, YOU = 1, ME = 2, NEWS = 3, METEO = 4 ,SPOTIFY = 5, YOUTUBE = 6, SPOTIFY_SINGLE_TRACK = 7;
+    private final int DATE = 0, YOU = 1, ME = 2, NEWS = 3, METEO = 4 ,SPOTIFY = 5, YOUTUBE = 6, SPOTIFY_SINGLE_TRACK = 7, LOGGING = 8;
 
     DisplayMetrics displayMetrics = new DisplayMetrics();
 
@@ -55,6 +55,10 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     @Override
     public int getItemCount() {
         return this.items.size();
+    }
+
+    public List<ChatData> getItems() {
+        return items;
     }
 
     @Override
@@ -76,6 +80,8 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             return YOUTUBE;
         }else if (items.get(position).getType().equals("7")) {
             return SPOTIFY_SINGLE_TRACK;
+        }else if (items.get(position).getType().equals("8")) {
+            return LOGGING;
         }
         return -1;
     }
@@ -113,6 +119,10 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             case SPOTIFY_SINGLE_TRACK:
                 View v7 = inflater.inflate(R.layout.layout_spotify_single_track, viewGroup, false);
                 viewHolder = new HolderSpotifySingleTrack(v7);
+                break;
+            case LOGGING:
+                View v8 = inflater.inflate(R.layout.layout_holder_logging, viewGroup, false);
+                viewHolder = new HolderLogging(v8);
                 break;
             default:
                 View v = inflater.inflate(R.layout.layout_holder_me, viewGroup, false);
@@ -156,11 +166,35 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                 holderMeteo vh4 = (holderMeteo) viewHolder;
                 configureViewHolder4(vh4,position);
                 break;
+            case LOGGING:
+                HolderLogging vh8 = (HolderLogging) viewHolder;
+                configureViewHolder8(vh8, position);
+                break;
             default:
                 HolderMe vh = (HolderMe) viewHolder;
                 configureViewHolder3(vh, position);
                 break;
         }
+    }
+
+    //Logging
+    private void configureViewHolder8(HolderLogging vh1, int position) {
+
+        //Se viene premuto il pulsante No
+        vh1.getBtnNo().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
+
+        //Se viene premuto il pulsante Si
+        vh1.getBtnSi().setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+            }
+        });
     }
 
     private void configureViewHolderNews(final HolderNews vh1, int position) {

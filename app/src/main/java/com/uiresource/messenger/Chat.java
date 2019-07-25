@@ -97,6 +97,9 @@ public class Chat extends BaseActivity
 
     private String spiegazione;
 
+    int contaId;//Id dell'item, autoincrement
+    boolean flagDebug; //Flag per verificare se è attivo o no il debug
+
 
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
@@ -127,6 +130,8 @@ public class Chat extends BaseActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat);
 
+        contaId = 0;
+        flagDebug = false;
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -136,7 +141,6 @@ public class Chat extends BaseActivity
 
         if(getIntent().hasExtra("email")){
             email = getIntent().getStringExtra("email");
-
         }
 
         txtContesto = (TextView) findViewById(R.id.txtContesto);
@@ -202,11 +206,18 @@ public class Chat extends BaseActivity
                     item.setType("2");//Imposto il layout della risposta, ovvero YOU
                     String mess = text.getText().toString(); //Domanda dell'utente
                     item.setText(mess);
+
+                    contaId++;
+
+                    item.setIdItem(contaId);//Imposto l'id
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     text.setText("");
 
+                    for (ChatData itemData:mAdapter.getItems()) {
+                        Log.i("CHATDATA",String.valueOf(itemData.getIdItem()));
+                    }
 
 
                     if (mess.equalsIgnoreCase("cambia")|| mess.equalsIgnoreCase("cambio") ||mess.equalsIgnoreCase("dammi un'altra") ||
@@ -222,9 +233,8 @@ public class Chat extends BaseActivity
                             Log.i("DOMANDA RECUPERATA",mess);
 
                             Background b = new Background();
-                            b.execute(mess);
+                            b.execute(mess,String.valueOf(contaId));
                         }else {
-                            data = new ArrayList<ChatData>();
                             item = new ChatData();
                             currentTime = Calendar.getInstance().getTime();
                             item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
@@ -252,7 +262,6 @@ public class Chat extends BaseActivity
 
                             if (!spiegazione.isEmpty()){
 
-                                data = new ArrayList<ChatData>();
                                 item = new ChatData();
                                 currentTime = Calendar.getInstance().getTime();
                                 item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
@@ -266,7 +275,6 @@ public class Chat extends BaseActivity
                                 mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                             }else {
 
-                                data = new ArrayList<ChatData>();
                                 item = new ChatData();
                                 currentTime = Calendar.getInstance().getTime();
                                 item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
@@ -280,7 +288,6 @@ public class Chat extends BaseActivity
                             }
 
                         }else {
-                            data = new ArrayList<ChatData>();
                             item = new ChatData();
                             currentTime = Calendar.getInstance().getTime();
                             item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
@@ -295,8 +302,9 @@ public class Chat extends BaseActivity
                     }else{
                         txtContesto.setText(mess);//Imposto la domanda
                         Log.i("DOMANDA DA SALVARE",txtContesto.getText().toString());
+
                         Background b = new Background();
-                        b.execute(mess);
+                        b.execute(mess,String.valueOf(contaId));
                     }
 
 
@@ -350,6 +358,8 @@ public class Chat extends BaseActivity
 
         return data;
     }
+
+
 
     @Override
     public void onBackPressed() {
@@ -458,6 +468,9 @@ public class Chat extends BaseActivity
                     //Url da visualizzare
                     String url = urlO;
 
+                    //Id item
+                    item.setIdItem(contaId);
+
                     item.setText(url);
                     data.add(item);
                     mAdapter.addItem(data);
@@ -469,6 +482,15 @@ public class Chat extends BaseActivity
                     }else {
                         spiegazione = "";
                     }
+
+                    //LOGGING
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item2 = new ChatData();
+                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item2.setType("8");
+                    data2.add(item2);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
                 }else if (intentName.equalsIgnoreCase("Interessi")  //INTENT GENERICI
@@ -484,10 +506,24 @@ public class Chat extends BaseActivity
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
 
+                    //Id item
+                    item.setIdItem(contaId);
+
                     item.setText(answer);
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    //LOGGING
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item2 = new ChatData();
+                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item2.setType("8");
+                    data2.add(item2);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
 
                 }else if (intentName.equalsIgnoreCase("Musica")){
                     Log.w("ANSWER",answer);
@@ -507,6 +543,9 @@ public class Chat extends BaseActivity
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("7");
 
+                        //Id item
+                        item.setIdItem(contaId);
+
                         item.setText(urlO);
                         item.setFlag(0);//Indico che è una canzone
                         data.add(item);
@@ -521,6 +560,15 @@ public class Chat extends BaseActivity
                         }else {
                             spiegazione = "";
                         }
+
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
                     }else {
@@ -538,6 +586,9 @@ public class Chat extends BaseActivity
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("5");
 
+                        //Id item
+                        item.setIdItem(contaId);
+
                         item.setText(urlO);
                         item.setFlag(1);//Indico che è una playlist
                         data.add(item);
@@ -552,6 +603,15 @@ public class Chat extends BaseActivity
                         }else {
                             spiegazione = "";
                         }
+
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
                     }
@@ -578,8 +638,10 @@ public class Chat extends BaseActivity
                     item.setImg(img);
                     item.setType("3");
 
-                    item.setText(url);
+                    //Id item
+                    item.setIdItem(contaId);
 
+                    item.setText(url);
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -591,6 +653,15 @@ public class Chat extends BaseActivity
                     }else {
                         spiegazione = "";
                     }
+
+                    //LOGGING
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item2 = new ChatData();
+                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item2.setType("8");
+                    data2.add(item2);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
 
@@ -613,6 +684,10 @@ public class Chat extends BaseActivity
                         item.setType("1");
                         String messaggio = "Sfortunatamente non sono stati trovati dati a riguardo 😔";
                         item.setText(messaggio);
+
+                        //Id item
+                        item.setIdItem(contaId);
+
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -686,10 +761,64 @@ public class Chat extends BaseActivity
                     item2.setText(dataM);
                     data.add(item2);
 
+                    //Id item
+                    item2.setIdItem(contaId);
+
                     item.setType("4");
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
+
+                    spiegazione = "";
+
+                    //LOGGING
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item3 = new ChatData();
+                    item3.setType("8");
+                    data2.add(item3);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
+                }else if (intentName.equalsIgnoreCase("attiva debug")) {
+                    flagDebug = true;
+
+                    Log.w("ANSWER",answer);
+                    answer = answer.replace("<br>", "\n");
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    item.setText(Html.fromHtml(answer).toString());
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    spiegazione = "";
+
+                }else if (intentName.equalsIgnoreCase("disattiva debug")) {
+                    flagDebug = false;
+
+                    Log.w("ANSWER",answer);
+                    answer = answer.replace("<br>", "\n");
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    item.setText(Html.fromHtml(answer).toString());
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                     spiegazione = "";
 
@@ -703,12 +832,24 @@ public class Chat extends BaseActivity
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
 
+                    //Id item
+                    item.setIdItem(contaId);
+
                     item.setText(Html.fromHtml(answer).toString());
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                     spiegazione = "";
+
+                    //LOGGING
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item2 = new ChatData();
+                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item2.setType("8");
+                    data2.add(item2);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
                 }

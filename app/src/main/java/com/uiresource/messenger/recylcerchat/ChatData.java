@@ -30,6 +30,8 @@ import retrofit.client.Response;
 public class ChatData {
     String type, text, time, spiegazione, spiegazioneNews;
 
+    int idItem; //id dell'item
+
     public void setSpiegazione(String spiegazione) {
         this.spiegazione = spiegazione;
     }
@@ -69,6 +71,14 @@ public class ChatData {
 
     public void setTime(String time) {
         this.time = time;
+    }
+
+    public void setIdItem(int idItem) {
+        this.idItem = idItem;
+    }
+
+    public int getIdItem() {
+        return idItem;
     }
 
     //METEO
