@@ -176,14 +176,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         });
         vh1.setImgBack(items.get(position).getImg());
         vh1.getChatText().setText(items.get(position).getText());
-        vh1.getTxtSpiegazioneNews().setText("");
 
-        if (items.get(position).getSpiegazioneNews() != ""){
-            vh1.getTxtSpiegazioneNews().setText(items.get(position).getSpiegazioneNews());
-            vh1.getTxtSpiegazioneNews().setVisibility(View.VISIBLE);
-        }else {
-            vh1.getTxtSpiegazioneNews().setVisibility(View.GONE);
-        }
     }
 
     private void configureViewHolder4(holderMeteo vh1, int position) {

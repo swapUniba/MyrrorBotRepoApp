@@ -57,7 +57,7 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
     Track track;
     SpotifyService spotify;
 
-    TextView txtTitolo, txtNomeArtista, spiegazione;
+    TextView txtTitolo, txtNomeArtista;
 
 
     private SpotifyAppRemote mSpotifyAppRemote;
@@ -68,8 +68,6 @@ public class HolderSpotify extends RecyclerView.ViewHolder {
         super(v);
 
         imgSpotify = (ImageView) v.findViewById(R.id.imgSpotify);
-
-        spiegazione = (TextView) v.findViewById(R.id.txtSpiegazione);
 
         playBtn = (Button) v.findViewById(R.id.playBtn);
         //elapsedTimeLabel = (TextView) v.findViewById(R.id.elapsedTimeLabel);

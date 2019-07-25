@@ -38,17 +38,5 @@
             android:textColor="@color/colorTextBlack"
             android:textSize="@dimen/h3" />
 
-        <TextView
-            android:id="@+id/txtSpiegazioneNews"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp"
-            android:background="@drawable/bg_chat_you"
-            android:textAlignment="viewStart"
-            android:textAppearance="@style/Light"
-            android:textColor="@color/colorTextBlack"
-            android:textSize="16sp"
-            android:visibility="gone" />
-
     </LinearLayout>
 </RelativeLayout>

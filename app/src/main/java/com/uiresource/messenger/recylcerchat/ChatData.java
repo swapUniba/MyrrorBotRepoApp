@@ -272,9 +272,6 @@ public class ChatData {
 
                 Log.i("url",url);
 
-                if (spiegazione != ""){
-                    holderSpotify.spiegazione.setText(getSpiegazione());
-                }
 
                 // Play a playlist
                 mSpotifyAppRemote.getPlayerApi().play("spotify:playlist:" + url);
@@ -297,9 +294,6 @@ public class ChatData {
 
                 Log.i("url",url);
 
-                if (spiegazione != ""){
-                    holderSpotify.spiegazione.setText(getSpiegazione());
-                }
 
                 // Play a playlist
                 mSpotifyAppRemote.getPlayerApi().play("spotify:album:" + url);

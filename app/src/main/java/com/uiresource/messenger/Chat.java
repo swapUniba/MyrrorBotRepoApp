@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
@@ -94,6 +95,8 @@ public class Chat extends BaseActivity
 
     private TextView txtContesto;//per il cambia
 
+    private String spiegazione;
+
 
     //MAPS
     private FusedLocationProviderClient mFusedLocationClient;
@@ -142,6 +145,7 @@ public class Chat extends BaseActivity
         //controllo permessi
         getDeviceLocation();
 
+        spiegazione = "";
 
         //Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -232,6 +236,61 @@ public class Chat extends BaseActivity
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                         }
 
+
+                    }else if (mess.equalsIgnoreCase("perchè")|| mess.equalsIgnoreCase("perche") ||
+                            mess.equalsIgnoreCase("come mai")|| mess.equalsIgnoreCase("spiega") ||
+                            mess.equalsIgnoreCase("spiegami il perchè")|| mess.equalsIgnoreCase("spiegazione") ||
+                            mess.equalsIgnoreCase("spiega")|| mess.equalsIgnoreCase("perchè?") ||
+                            mess.equalsIgnoreCase("per quale motivo")|| mess.equalsIgnoreCase("per quale motivo?") ||
+                            mess.equalsIgnoreCase("come mai?")|| mess.equalsIgnoreCase("mi spieghi il perchè?") ||
+                            mess.equalsIgnoreCase("perchè'")) {
+
+                        mess =  txtContesto.getText().toString(); //Prendo l'ultimo domanda
+
+                        if (mess != ""){
+                            Log.i("DOMANDA RECUPERATA",mess);
+
+                            if (!spiegazione.isEmpty()){
+
+                                data = new ArrayList<ChatData>();
+                                item = new ChatData();
+                                currentTime = Calendar.getInstance().getTime();
+                                item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item.setType("1");
+
+
+
+                                item.setText(Html.fromHtml(spiegazione).toString());//Codifica le emojii
+                                data.add(item);
+                                mAdapter.addItem(data);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }else {
+
+                                data = new ArrayList<ChatData>();
+                                item = new ChatData();
+                                currentTime = Calendar.getInstance().getTime();
+                                item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item.setType("1");
+
+                                item.setText("Non ho nulla da spiegarti ☺️️");
+                                data.add(item);
+                                mAdapter.addItem(data);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                            }
+
+                        }else {
+                            data = new ArrayList<ChatData>();
+                            item = new ChatData();
+                            currentTime = Calendar.getInstance().getTime();
+                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item.setType("1");
+
+                            item.setText("Non ho nulla da spiegarti ☺️️");
+                            data.add(item);
+                            mAdapter.addItem(data);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
 
                     }else{
                         txtContesto.setText(mess);//Imposto la domanda
@@ -380,23 +439,15 @@ public class Chat extends BaseActivity
 
                 Log.e("INTENT", arr.toString());
 
-                if(answer.indexOf("Purtroppo non ho capito la domanda") != -1 || confidence < 0.6 || answer.indexOf("sfortunatamente") != -1 || answer.equals("")){
-                    List<ChatData> data = new ArrayList<ChatData>();
-                    ChatData item = new ChatData();
-                    Date currentTime = Calendar.getInstance().getTime();
-                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item.setType("1");
-
-                    item.setText(answer);
-                    data.add(item);
-                    mAdapter.addItem(data);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-                    return;
-
-                }
 
                 //YOUTUBE --> Valori soglia diversi
                 if(intentName.equalsIgnoreCase("Video in base alle emozioni") || intentName.equalsIgnoreCase("Ricerca Video")){
+
+                    JSONObject answerOb = arr.getJSONObject("answer");
+                    String urlO = answerOb.getString("ind");
+                    String explainO = answerOb.getString("explain");
+                    Log.i("urlO",urlO);
+                    Log.i("explainO",explainO);
 
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
@@ -405,12 +456,19 @@ public class Chat extends BaseActivity
                     item.setType("6");//Imposto il layout della risposta, ovvero YOUTUBE
 
                     //Url da visualizzare
-                    String url = answer;
+                    String url = urlO;
 
                     item.setText(url);
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    //Salvo la spiegazione in una variabile così se l'utente mi chiede il perchè, la mostro
+                    if (explainO != ""){
+                        spiegazione = explainO;
+                    }else {
+                        spiegazione = "";
+                    }
 
 
                 }else if (intentName.equalsIgnoreCase("Interessi")  //INTENT GENERICI
@@ -443,35 +501,25 @@ public class Chat extends BaseActivity
                         Log.i("urlO",urlO);
                         Log.i("explainO",explainO);
 
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item.setType("7");
+
+                        item.setText(urlO);
+                        item.setFlag(0);//Indico che è una canzone
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                        spotifyAppRemote = item.getmSpotifyAppRemote();
+
+                        //Salvo la spiegazione in una variabile così se l'utente mi chiede il perchè, la mostro
                         if (explainO != ""){
-                            List<ChatData> data = new ArrayList<ChatData>();
-                            ChatData item = new ChatData();
-                            Date currentTime = Calendar.getInstance().getTime();
-                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                            item.setType("7");
-
-                            item.setText(urlO);
-                            item.setFlag(0);//Indico che è una canzone
-                            data.add(item);
-                            mAdapter.addItem(data);
-                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                            spotifyAppRemote = item.getmSpotifyAppRemote();
-
+                            spiegazione = explainO;
                         }else {
-                            List<ChatData> data = new ArrayList<ChatData>();
-                            ChatData item = new ChatData();
-                            Date currentTime = Calendar.getInstance().getTime();
-                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                            item.setType("7");
-
-                            item.setText(urlO);
-                            item.setFlag(0);//Indico che è una canzone
-                            data.add(item);
-                            mAdapter.addItem(data);
-                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                            spotifyAppRemote = item.getmSpotifyAppRemote();
+                            spiegazione = "";
                         }
 
 
@@ -484,42 +532,25 @@ public class Chat extends BaseActivity
                         Log.i("urlO",urlO);
                         Log.i("explainO",explainO);
 
+                        List<ChatData> data = new ArrayList<ChatData>();
+                        ChatData item = new ChatData();
+                        Date currentTime = Calendar.getInstance().getTime();
+                        item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item.setType("5");
+
+                        item.setText(urlO);
+                        item.setFlag(1);//Indico che è una playlist
+                        data.add(item);
+                        mAdapter.addItem(data);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                        spotifyAppRemote = item.getmSpotifyAppRemote();
+
+                        //Salvo la spiegazione in una variabile così se l'utente mi chiede il perchè, la mostro
                         if (explainO != ""){
-                            List<ChatData> data = new ArrayList<ChatData>();
-                            ChatData item = new ChatData();
-                            Date currentTime = Calendar.getInstance().getTime();
-                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-
-                            item.setType("5");
-
-                            item.setText(urlO);
-                            item.setFlag(1);//Indico che è una playlist
-                            item.setSpiegazione(explainO);//Spiegazione
-                            data.add(item);
-                            mAdapter.addItem(data);
-                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                            spotifyAppRemote = item.getmSpotifyAppRemote();
-
-
-
-
+                            spiegazione = explainO;
                         }else {
-                            List<ChatData> data = new ArrayList<ChatData>();
-                            ChatData item = new ChatData();
-                            Date currentTime = Calendar.getInstance().getTime();
-                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                            item.setType("5");
-
-                            item.setText(urlO);
-                            item.setFlag(1);//Indico che è una playlist
-                            item.setSpiegazione("");//Spiegazione
-                            data.add(item);
-                            mAdapter.addItem(data);
-                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                            spotifyAppRemote = item.getmSpotifyAppRemote();
-
+                            spiegazione = "";
                         }
 
 
@@ -530,50 +561,44 @@ public class Chat extends BaseActivity
                     String url = news.getString("url");
                     String img = news.getString("image");
                     String title = news.getString("title");
+                    String explain0 = "";
+
+                    if (news.has("explain")){
+                        explain0 = news.getString("explain");
+                    }else {
+                        explain0 = "";
+                    }
+
+                    answer = title;
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+
+                    item.setImg(img);
+                    item.setType("3");
+
+                    item.setText(url);
+
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
-                    try {//Se è presente explain
-                        String explain = news.getString("explain");
-                        Log.i("SPIEGAZIONE NEWS",explain);
-
-                        answer = title;
-                        List<ChatData> data = new ArrayList<ChatData>();
-                        ChatData item = new ChatData();
-                        Date currentTime = Calendar.getInstance().getTime();
-                        //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-
-                        item.setImg(img);
-                        item.setType("3");
-
-                        item.setText(url);
-                        item.setSpiegazioneNews(explain);
-
-                        data.add(item);
-                        mAdapter.addItem(data);
-                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
-
-                    }catch (JSONException e){
-                        answer = title;
-                        List<ChatData> data = new ArrayList<ChatData>();
-                        ChatData item = new ChatData();
-                        Date currentTime = Calendar.getInstance().getTime();
-                        //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-
-                        item.setImg(img);
-                        item.setType("3");
-
-                        item.setText(url);
-                        item.setSpiegazioneNews("");
-
-                        data.add(item);
-                        mAdapter.addItem(data);
-                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    //Salvo la spiegazione in una variabile così se l'utente mi chiede il perchè, la mostro
+                    if (explain0 != ""){
+                        spiegazione = explain0;
+                    }else {
+                        spiegazione = "";
                     }
 
 
-                } else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
 
+                } else if(intentName.equals("Meteo")){
 
+                    JSONObject obj = new JSONObject(answer);
+                    String meteo = obj.getString("res");
+                    String city = obj.getString("city");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
 
@@ -586,14 +611,14 @@ public class Chat extends BaseActivity
 
                     if(answer.equals("")){
                         item.setType("1");
-                        String messaggio = "sfortunatamente non sono stati trovati dati a riguardo";
+                        String messaggio = "Sfortunatamente non sono stati trovati dati a riguardo 😔";
                         item.setText(messaggio);
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     }
-                    String[] array = answer.split("<br>");
-                    String dataM = "Dati meteo del ";
+                    String[] array = meteo.split("<br>");
+                    String dataM = "Ecco i dati relativi a " +city + " del ";
                     for (int i = 0;i< array.length;i++){
                         String record[] = array[i].split(";");
 
@@ -666,7 +691,10 @@ public class Chat extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
 
-                }  else {
+                    spiegazione = "";
+
+
+                } else {
                     Log.w("ANSWER",answer);
                      answer = answer.replace("<br>", "\n");
                     List<ChatData> data = new ArrayList<ChatData>();
@@ -675,10 +703,13 @@ public class Chat extends BaseActivity
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
 
-                    item.setText(answer);
+                    item.setText(Html.fromHtml(answer).toString());
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    spiegazione = "";
+
 
                 }
 

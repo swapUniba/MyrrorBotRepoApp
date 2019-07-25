@@ -179,11 +179,16 @@
 
             <TextView
                 android:id="@+id/txtGuest"
-                android:layout_width="match_parent"
+                android:layout_width="405dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="300dp"
+                android:layout_alignParentStart="true"
+                android:layout_alignParentEnd="true"
+                android:layout_marginStart="0dp"
                 android:layout_marginLeft="120dp"
+                android:layout_marginTop="300dp"
+                android:layout_marginEnd="6dp"
                 android:text="Accedi come Guest"
+                android:textAlignment="center"
                 android:textSize="18sp" />
 
             <RelativeLayout
