@@ -210,7 +210,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
                     }
                 }
-                Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
                 LoggingBackground loggingBackground = new LoggingBackground();
                 loggingBackground.execute(domanda,risposta,email,"No");
 
@@ -248,7 +248,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
                     }
                 }
-                Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
                 LoggingBackground loggingBackground = new LoggingBackground();
                 loggingBackground.execute(domanda,risposta,email,"Si");
 
@@ -351,7 +351,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         final ChatData mYoutubeVideo = new ChatData();
         mYoutubeVideo.setId(1l);
         mYoutubeVideo.setImageUrl("https://img.youtube.com/vi/" + idUrl + "/mqdefault.jpg");//Prendo l'immagine(thumbnail) del video
-        mYoutubeVideo.setTitle("Ecco qui il video richiesto 😀");
+        mYoutubeVideo.setTitle(mContext.getResources().getString(R.string.videoRichiestoStr));
         mYoutubeVideo.setVideoId(idUrl);
 
         ((Activity) vh1.itemView.getContext()).getWindowManager().getDefaultDisplay().getMetrics(displayMetrics);

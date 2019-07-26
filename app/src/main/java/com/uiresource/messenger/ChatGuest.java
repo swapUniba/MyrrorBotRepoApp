@@ -19,6 +19,7 @@ import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.MenuInflater;
 import android.view.MotionEvent;
@@ -202,40 +203,83 @@ public class ChatGuest extends BaseActivity
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     text.setText("");
-                    if (mess.equalsIgnoreCase("cambia")|| mess.equalsIgnoreCase("cambio") ||mess.equalsIgnoreCase("dammi un'altra") ||
-                            mess.equalsIgnoreCase("leggi un'altra") ||mess.equalsIgnoreCase("dammene un'altra") ||mess.equalsIgnoreCase("leggine un'altra") ||
-                            mess.equalsIgnoreCase("leggi altra news") ||mess.equalsIgnoreCase("altra canzone") ||mess.equalsIgnoreCase("dimmi un'altra") ||
-                            mess.equalsIgnoreCase("riproducine un'altra") ||mess.equalsIgnoreCase("cambia video") ||mess.equalsIgnoreCase("fammi vedere un altro") ||
-                            mess.equalsIgnoreCase("dammi un altro") ||mess.equalsIgnoreCase("altro video") ||mess.equalsIgnoreCase("altra canzone") ||
-                            mess.equalsIgnoreCase("altra news") ){
 
-                        mess =  txtContestoGuest.getText().toString(); //Prendo l'ultimo domanda
 
-                        if (mess != ""){
-                            Log.i("DOMANDA RECUPERATA",mess);
+                    //INGLESE
+                    if (LoginActivity.lingua.equalsIgnoreCase("English (United States)")) {
+                        if (mess.equalsIgnoreCase("change")|| mess.equalsIgnoreCase("change song") ||mess.equalsIgnoreCase("change track") ||
+                                mess.equalsIgnoreCase("another") ||mess.equalsIgnoreCase("another song") ||mess.equalsIgnoreCase("give me another song") ||
+                                mess.equalsIgnoreCase("give me") ||mess.equalsIgnoreCase("give me another") ||mess.equalsIgnoreCase("give me another track") ||
+                                mess.equalsIgnoreCase("give me a track") ||mess.equalsIgnoreCase("give me a song") ||mess.equalsIgnoreCase("give me a news") ||
+                                mess.equalsIgnoreCase("another news") ||mess.equalsIgnoreCase("another video") ||mess.equalsIgnoreCase("give me a video") ||
+                                mess.equalsIgnoreCase("another track") ){
 
+                            mess =  txtContestoGuest.getText().toString(); //Prendo l'ultimo domanda
+
+                            if (mess != ""){
+                                Log.i("DOMANDA RECUPERATA",mess);
+
+                                Background b = new Background();
+                                b.execute(mess);
+                            }else {
+                                data = new ArrayList<ChatData>();
+                                item = new ChatData();
+                                currentTime = Calendar.getInstance().getTime();
+                                item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item.setType("1");
+
+                                item.setText("The 'change' function is only available if a previous request has been selected!");
+                                data.add(item);
+                                mAdapter.addItem(data);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
+
+
+                        }else{
+                            txtContestoGuest.setText(mess);//Imposto la domanda
+                            Log.i("DOMANDA DA SALVARE",txtContestoGuest.getText().toString());
                             Background b = new Background();
                             b.execute(mess);
-                        }else {
-                            data = new ArrayList<ChatData>();
-                            item = new ChatData();
-                            currentTime = Calendar.getInstance().getTime();
-                            item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                            item.setType("1");
-
-                            item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
-                            data.add(item);
-                            mAdapter.addItem(data);
-                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                         }
+                    }else {//ITALIANO
+                        if (mess.equalsIgnoreCase("cambia")|| mess.equalsIgnoreCase("cambio") ||mess.equalsIgnoreCase("dammi un'altra") ||
+                                mess.equalsIgnoreCase("leggi un'altra") ||mess.equalsIgnoreCase("dammene un'altra") ||mess.equalsIgnoreCase("leggine un'altra") ||
+                                mess.equalsIgnoreCase("leggi altra news") ||mess.equalsIgnoreCase("altra canzone") ||mess.equalsIgnoreCase("dimmi un'altra") ||
+                                mess.equalsIgnoreCase("riproducine un'altra") ||mess.equalsIgnoreCase("cambia video") ||mess.equalsIgnoreCase("fammi vedere un altro") ||
+                                mess.equalsIgnoreCase("dammi un altro") ||mess.equalsIgnoreCase("altro video") ||mess.equalsIgnoreCase("altra canzone") ||
+                                mess.equalsIgnoreCase("altra news") ){
+
+                            mess =  txtContestoGuest.getText().toString(); //Prendo l'ultimo domanda
+
+                            if (mess != ""){
+                                Log.i("DOMANDA RECUPERATA",mess);
+
+                                Background b = new Background();
+                                b.execute(mess);
+                            }else {
+                                data = new ArrayList<ChatData>();
+                                item = new ChatData();
+                                currentTime = Calendar.getInstance().getTime();
+                                item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item.setType("1");
+
+                                item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
+                                data.add(item);
+                                mAdapter.addItem(data);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
 
 
-                    }else{
-                        txtContestoGuest.setText(mess);//Imposto la domanda
-                        Log.i("DOMANDA DA SALVARE",txtContestoGuest.getText().toString());
-                        Background b = new Background();
-                        b.execute(mess);
+                        }else{
+                            txtContestoGuest.setText(mess);//Imposto la domanda
+                            Log.i("DOMANDA DA SALVARE",txtContestoGuest.getText().toString());
+                            Background b = new Background();
+                            b.execute(mess);
+                        }
                     }
+
+
+
                 }
             }
         });
@@ -462,7 +506,7 @@ public class ChatGuest extends BaseActivity
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("1");
 
-                        item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
+                        item.setText(getResources().getString(R.string.loginMyrrorStr));
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -499,7 +543,7 @@ public class ChatGuest extends BaseActivity
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("1");
 
-                        item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
+                        item.setText(getResources().getString(R.string.loginMyrrorStr));
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -528,7 +572,7 @@ public class ChatGuest extends BaseActivity
 
                     if(answer.equals("")){
                         item.setType("1");
-                        String messaggio = "Sfortunatamente non sono stati trovati dati a riguardo 😔";
+                        String messaggio = getResources().getString(R.string.datiNonPresentiStr);
                         item.setText(messaggio);
 
                         data.add(item);
@@ -537,7 +581,9 @@ public class ChatGuest extends BaseActivity
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     }
                     String[] array = meteo.split("<br>");
-                    String dataM = "Ecco i dati relativi a " +city + " del ";
+                    String dataM = getResources().getString(R.string.datiMeteo1Str) + " " + city + " "
+                            + getResources().getString(R.string.datiMeteo2Str) + " ";
+
                     for (int i = 0;i< array.length;i++){
                         String record[] = array[i].split(";");
 
@@ -623,7 +669,7 @@ public class ChatGuest extends BaseActivity
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
 
-                    item.setText("Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀");
+                    item.setText(getResources().getString(R.string.loginMyrrorStr));
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -923,7 +969,7 @@ public class ChatGuest extends BaseActivity
         Date currentTime = Calendar.getInstance().getTime();
         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
         item.setType("3");//Imposto il layout della risposta, ovvero YOU
-        item.setText("Ciao! \uD83D\uDE04 Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.");
+        item.setText(getResources().getString(R.string.botBenvenutoStr));
         item.setSpiegazioneNews("");
         data.add(item);
         mAdapter.addItem(data);

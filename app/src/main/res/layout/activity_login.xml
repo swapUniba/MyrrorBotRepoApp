@@ -31,7 +31,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="30dp"
         android:layout_marginTop="45dp"
-        android:text="Benvenuto"
+        android:text="@string/benvenutoLogin"
         android:textColor="@color/colorWhite"
         android:textSize="17sp" />
 
@@ -187,7 +187,7 @@
                 android:layout_marginLeft="120dp"
                 android:layout_marginTop="300dp"
                 android:layout_marginEnd="6dp"
-                android:text="Accedi come Guest"
+                android:text="@string/accediGuest"
                 android:textAlignment="center"
                 android:textSize="18sp" />
 

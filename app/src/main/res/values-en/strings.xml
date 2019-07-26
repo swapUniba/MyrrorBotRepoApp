@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="action_settings">Settings</string>
+    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="error_field_required">This field is required</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
+    <string name="error_invalid_email">This email address is invalid</string>
+    <string name="error_invalid_password">This password is too short</string>
+    <string name="title_activity_login">Sign in</string>
+    <string name="avvisoSpotify" >To access the Spotify features, download the app</string>
+    <string name="benvenutoLogin">Welcome</string>
+    <string name="accediGuest">Access as Guest</string>
+    <string name="inviaStr" >Send</string>
+    <string name="messaggioStr">Write your message</string>
+    <string name="soddisfattoStr">Are you satisfied about the answer?</string>
+    <string name="siStr">Yes</string>
+    <string name="noStr">No</string>
+    <string name="spotifyTrackStr1">Unfortunately I still can\'t play the individual songs in the app because of Spotify</string>
+    <string name="spotifyTrackStr2">You can play the searched song by clicking on the link below</string>
+    <string name="titoloStr">Title</string>
+    <string name="artistaStr">Artist name</string>
+    <string name="videoRichiestoStr">This is your request 😀</string>
+    <string name="datiNonPresentiStr">Unfortunately no data was found about the question 😔</string>
+    <string name="datiMeteo1Str">Here is the data about</string>
+    <string name="datiMeteo2Str">for</string>
+    <string name="botBenvenutoStr">Hi! 😄 I\'m your personal assistant. I can give you information about your physical condition, your interests and your personality. I can recommend songs, music and videos based on your emotions and preferences.</string>
+    <string name="loginMyrrorStr">This function is available only after you have logged in to Myrror 😀</string>
+</resources>

@@ -22,7 +22,7 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="24dp"
             android:layout_marginEnd="8dp"
-            android:text="Sei soddisfatto della risposta?"
+            android:text="@string/soddisfattoStr"
             android:textAlignment="center"
             android:textColor="@color/colorTextBlack"
             android:textSize="20sp"></TextView>
@@ -40,7 +40,7 @@
                 android:layout_marginStart="48dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="8dp"
-                android:text="Si"
+                android:text="@string/siStr"
                 android:textSize="18sp"></Button>
 
             <Button
@@ -50,7 +50,7 @@
                 android:layout_height="50dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="40dp"
-                android:text="No"
+                android:text="@string/noStr"
                 android:textSize="18sp"></Button>
         </LinearLayout>
 

@@ -92,6 +92,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
     private TextView txtGuest;
 
+    public static String lingua;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -99,6 +102,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         // Set up the login form.
         mEmailView = (EditText) findViewById(R.id.etEmail);
         populateAutoComplete();
+
+        lingua = java.util.Locale.getDefault().getDisplayName();
+        Log.i("lingua",lingua);
 
         txtGuest = (TextView) findViewById(R.id.txtGuest);
 
