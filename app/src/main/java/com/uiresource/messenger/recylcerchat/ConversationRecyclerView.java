@@ -15,6 +15,8 @@ import com.bumptech.glide.request.RequestOptions;
 
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
+import com.uiresource.messenger.Chat;
+import com.uiresource.messenger.PreferenceData;
 import com.uiresource.messenger.R;
 
 import java.io.UnsupportedEncodingException;
@@ -184,7 +186,36 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         vh1.getBtnNo().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                String email = PreferenceData.getLoggedInEmailUser(view.getContext());
+                String domanda = "";
+                String risposta = "";
+                int id = items.get(position).getIdItem();
+                for (ChatData chatItem:items) {
+                    if (chatItem.getIdItem() == id && !chatItem.getType().equalsIgnoreCase("8")){
 
+                        if (chatItem.getType().equalsIgnoreCase("1")){
+                            if (chatItem.getAnswerLog() != null){
+                                risposta = chatItem.getAnswerLog();
+                            }else {
+                                risposta = chatItem.getText();
+                            }
+
+                        }else if (chatItem.getType().equalsIgnoreCase("2")){
+                            domanda = chatItem.getText();
+                        }else {
+                            if (chatItem.getAnswerLog() != null){
+                                risposta = chatItem.getAnswerLog();
+                            }
+                        }
+
+                    }
+                }
+                Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                LoggingBackground loggingBackground = new LoggingBackground();
+                loggingBackground.execute(domanda,risposta,email,"No");
+
+                vh1.getBtnSi().setEnabled(false);
+                vh1.getBtnNo().setEnabled(false);
             }
         });
 
@@ -193,8 +224,41 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             @Override
             public void onClick(View view) {
 
+                String email = PreferenceData.getLoggedInEmailUser(view.getContext());
+                String domanda = "";
+                String risposta = "";
+                int id = items.get(position).getIdItem();
+                for (ChatData chatItem:items) {
+                    if (chatItem.getIdItem() == id && !chatItem.getType().equalsIgnoreCase("8")){
+
+                        if (chatItem.getType().equalsIgnoreCase("1")){
+                            if (chatItem.getAnswerLog() != null){
+                                risposta = chatItem.getAnswerLog();
+                            }else {
+                                risposta = chatItem.getText();
+                            }
+
+                        }else if (chatItem.getType().equalsIgnoreCase("2")){
+                            domanda = chatItem.getText();
+                        }else {
+                            if (chatItem.getAnswerLog() != null){
+                                risposta = chatItem.getAnswerLog();
+                            }
+                        }
+
+                    }
+                }
+                Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                LoggingBackground loggingBackground = new LoggingBackground();
+                loggingBackground.execute(domanda,risposta,email,"Si");
+
+                vh1.getBtnSi().setEnabled(false);
+                vh1.getBtnNo().setEnabled(false);
+
             }
         });
+
+
     }
 
     private void configureViewHolderNews(final HolderNews vh1, int position) {

@@ -508,9 +508,16 @@ public class ChatGuest extends BaseActivity
 
 
 
-                }else if(intentName.equals("Meteo odierno") || intentName.equals("Previsioni meteo") || intentName.equals("Meteo citta")){
+                }else if(intentName.equals("Meteo")){
+
+                    JSONObject obj = new JSONObject(answer);
+                    String meteo = obj.getString("res");
+                    String city = obj.getString("city");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+
+                    item.answerLog = result;
+
 
                     item.list = new ArrayList<Meteo>();
 
@@ -521,14 +528,16 @@ public class ChatGuest extends BaseActivity
 
                     if(answer.equals("")){
                         item.setType("1");
-                        String messaggio = "sfortunatamente non sono stati trovati dati a riguardo";
+                        String messaggio = "Sfortunatamente non sono stati trovati dati a riguardo 😔";
                         item.setText(messaggio);
+
                         data.add(item);
+
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     }
-                    String[] array = answer.split("<br>");
-                    String dataM = "Dati meteo del ";
+                    String[] array = meteo.split("<br>");
+                    String dataM = "Ecco i dati relativi a " +city + " del ";
                     for (int i = 0;i< array.length;i++){
                         String record[] = array[i].split(";");
 
@@ -596,10 +605,15 @@ public class ChatGuest extends BaseActivity
                     item2.setText(dataM);
                     data.add(item2);
 
+
+
                     item.setType("4");
+
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
+
 
                 } else {
                     Log.w("ANSWER",answer);

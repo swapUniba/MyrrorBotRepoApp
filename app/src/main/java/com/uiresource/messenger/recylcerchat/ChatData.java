@@ -95,6 +95,11 @@ public class ChatData {
         return img;
     }
 
+    public String answerLog;
+
+    public String getAnswerLog() {
+        return answerLog;
+    }
 
     //YOUTUBE
     private String title;
@@ -331,5 +336,8 @@ public class ChatData {
 
     }
 
-
+    @Override
+    public String toString() {
+        return answerLog;
+    }
 }

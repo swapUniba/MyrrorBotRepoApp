@@ -41,6 +41,7 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
@@ -92,6 +93,9 @@ public class Chat extends BaseActivity
     private ImageView imageLogoUtente;
 
     public String email;
+
+    public static List<ChatData> dataLog;
+
 
     private TextView txtContesto;//per il cambia
 
@@ -150,6 +154,8 @@ public class Chat extends BaseActivity
         getDeviceLocation();
 
         spiegazione = "";
+
+        dataLog = new ArrayList<ChatData>();
 
         //Drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -210,6 +216,9 @@ public class Chat extends BaseActivity
                     contaId++;
 
                     item.setIdItem(contaId);//Imposto l'id
+
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -241,6 +250,9 @@ public class Chat extends BaseActivity
                             item.setType("1");
 
                             item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
+
+                            dataLog.add(item);
+
                             data.add(item);
                             mAdapter.addItem(data);
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -270,6 +282,9 @@ public class Chat extends BaseActivity
 
 
                                 item.setText(Html.fromHtml(spiegazione).toString());//Codifica le emojii
+
+                                dataLog.add(item);
+
                                 data.add(item);
                                 mAdapter.addItem(data);
                                 mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -281,6 +296,9 @@ public class Chat extends BaseActivity
                                 item.setType("1");
 
                                 item.setText("Non ho nulla da spiegarti ☺️️");
+
+                                dataLog.add(item);
+
                                 data.add(item);
                                 mAdapter.addItem(data);
                                 mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -294,6 +312,9 @@ public class Chat extends BaseActivity
                             item.setType("1");
 
                             item.setText("Non ho nulla da spiegarti ☺️️");
+
+                            dataLog.add(item);
+
                             data.add(item);
                             mAdapter.addItem(data);
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -441,6 +462,7 @@ public class Chat extends BaseActivity
                 String result = s.get(0);
                 String mess = s.get(1);
 
+
                 JSONObject arr = new JSONObject(result);
 
                 String answer = arr.getString("answer");
@@ -461,6 +483,9 @@ public class Chat extends BaseActivity
 
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+
+                    item.answerLog = result;
+
                     Date currentTime = Calendar.getInstance().getTime();
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("6");//Imposto il layout della risposta, ovvero YOUTUBE
@@ -472,6 +497,9 @@ public class Chat extends BaseActivity
                     item.setIdItem(contaId);
 
                     item.setText(url);
+
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -483,14 +511,19 @@ public class Chat extends BaseActivity
                         spiegazione = "";
                     }
 
-                    //LOGGING
-                    List<ChatData> data2 = new ArrayList<ChatData>();
-                    ChatData item2 = new ChatData();
-                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item2.setType("8");
-                    data2.add(item2);
-                    mAdapter.addItem(data2);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
+
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
+
 
 
                 }else if (intentName.equalsIgnoreCase("Interessi")  //INTENT GENERICI
@@ -502,6 +535,9 @@ public class Chat extends BaseActivity
 
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+
+                    item.answerLog = result;
+
                     Date currentTime = Calendar.getInstance().getTime();
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
@@ -510,18 +546,25 @@ public class Chat extends BaseActivity
                     item.setIdItem(contaId);
 
                     item.setText(answer);
+
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
-                    //LOGGING
-                    List<ChatData> data2 = new ArrayList<ChatData>();
-                    ChatData item2 = new ChatData();
-                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item2.setType("8");
-                    data2.add(item2);
-                    mAdapter.addItem(data2);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
+
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
 
 
@@ -539,6 +582,9 @@ public class Chat extends BaseActivity
 
                         List<ChatData> data = new ArrayList<ChatData>();
                         ChatData item = new ChatData();
+
+                        item.answerLog = result;
+
                         Date currentTime = Calendar.getInstance().getTime();
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("7");
@@ -548,6 +594,9 @@ public class Chat extends BaseActivity
 
                         item.setText(urlO);
                         item.setFlag(0);//Indico che è una canzone
+
+                        dataLog.add(item);
+
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -561,14 +610,18 @@ public class Chat extends BaseActivity
                             spiegazione = "";
                         }
 
-                        //LOGGING
-                        List<ChatData> data2 = new ArrayList<ChatData>();
-                        ChatData item2 = new ChatData();
-                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                        item2.setType("8");
-                        data2.add(item2);
-                        mAdapter.addItem(data2);
-                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        if (flagDebug){
+                            //LOGGING
+                            List<ChatData> data2 = new ArrayList<ChatData>();
+                            ChatData item2 = new ChatData();
+                            item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item2.setType("8");
+                            item2.setIdItem(contaId);
+
+                            data2.add(item2);
+                            mAdapter.addItem(data2);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
 
 
                     }else {
@@ -582,6 +635,9 @@ public class Chat extends BaseActivity
 
                         List<ChatData> data = new ArrayList<ChatData>();
                         ChatData item = new ChatData();
+
+                        item.answerLog = result;
+
                         Date currentTime = Calendar.getInstance().getTime();
                         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item.setType("5");
@@ -591,6 +647,9 @@ public class Chat extends BaseActivity
 
                         item.setText(urlO);
                         item.setFlag(1);//Indico che è una playlist
+
+                        dataLog.add(item);
+
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -604,14 +663,18 @@ public class Chat extends BaseActivity
                             spiegazione = "";
                         }
 
-                        //LOGGING
-                        List<ChatData> data2 = new ArrayList<ChatData>();
-                        ChatData item2 = new ChatData();
-                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                        item2.setType("8");
-                        data2.add(item2);
-                        mAdapter.addItem(data2);
-                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        if (flagDebug){
+                            //LOGGING
+                            List<ChatData> data2 = new ArrayList<ChatData>();
+                            ChatData item2 = new ChatData();
+                            item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item2.setType("8");
+                            item2.setIdItem(contaId);
+
+                            data2.add(item2);
+                            mAdapter.addItem(data2);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
 
 
                     }
@@ -632,6 +695,9 @@ public class Chat extends BaseActivity
                     answer = title;
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+
+                    item.answerLog = result;
+
                     Date currentTime = Calendar.getInstance().getTime();
                     //item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
 
@@ -642,6 +708,9 @@ public class Chat extends BaseActivity
                     item.setIdItem(contaId);
 
                     item.setText(url);
+
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -654,14 +723,18 @@ public class Chat extends BaseActivity
                         spiegazione = "";
                     }
 
-                    //LOGGING
-                    List<ChatData> data2 = new ArrayList<ChatData>();
-                    ChatData item2 = new ChatData();
-                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item2.setType("8");
-                    data2.add(item2);
-                    mAdapter.addItem(data2);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
+
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
 
 
@@ -672,6 +745,9 @@ public class Chat extends BaseActivity
                     String city = obj.getString("city");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+
+                    item.answerLog = result;
+
 
                     item.list = new ArrayList<Meteo>();
 
@@ -689,6 +765,9 @@ public class Chat extends BaseActivity
                         item.setIdItem(contaId);
 
                         data.add(item);
+
+                        dataLog.add(item);
+
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     }
@@ -762,22 +841,31 @@ public class Chat extends BaseActivity
                     data.add(item2);
 
                     //Id item
-                    item2.setIdItem(contaId);
+                    item.setIdItem(contaId);
 
                     item.setType("4");
+
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
 
                     spiegazione = "";
 
-                    //LOGGING
-                    List<ChatData> data2 = new ArrayList<ChatData>();
-                    ChatData item3 = new ChatData();
-                    item3.setType("8");
-                    data2.add(item3);
-                    mAdapter.addItem(data2);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item3 = new ChatData();
+                        item3.setType("8");
+
+                        item3.setIdItem(contaId);
+
+                        data2.add(item3);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
 
                 }else if (intentName.equalsIgnoreCase("attiva debug")) {
@@ -795,6 +883,8 @@ public class Chat extends BaseActivity
                     item.setIdItem(contaId);
 
                     item.setText(Html.fromHtml(answer).toString());
+
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -828,6 +918,8 @@ public class Chat extends BaseActivity
                      answer = answer.replace("<br>", "\n");
                     List<ChatData> data = new ArrayList<ChatData>();
                     ChatData item = new ChatData();
+                    item.answerLog = result;
+
                     Date currentTime = Calendar.getInstance().getTime();
                     item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                     item.setType("1");
@@ -837,20 +929,26 @@ public class Chat extends BaseActivity
 
                     item.setText(Html.fromHtml(answer).toString());
                     data.add(item);
+
+                    dataLog.add(item);
+
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                     spiegazione = "";
 
-                    //LOGGING
-                    List<ChatData> data2 = new ArrayList<ChatData>();
-                    ChatData item2 = new ChatData();
-                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-                    item2.setType("8");
-                    data2.add(item2);
-                    mAdapter.addItem(data2);
-                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
 
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
                 }
 
