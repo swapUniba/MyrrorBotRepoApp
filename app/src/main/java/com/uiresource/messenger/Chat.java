@@ -96,7 +96,6 @@ public class Chat extends BaseActivity
 
     public static List<ChatData> dataLog;
 
-
     private TextView txtContesto;//per il cambia
 
     private String spiegazione;
@@ -213,6 +212,13 @@ public class Chat extends BaseActivity
                     String mess = text.getText().toString(); //Domanda dell'utente
                     item.setText(mess);
 
+                    //TimestampStart
+                    Date date= new Date();
+                    long time = date.getTime();
+                    String timestampStart = String.valueOf(time);
+                    item.setTimestampStart(Long.valueOf(timestampStart));
+                    Log.i("timeStart",timestampStart);
+
                     contaId++;
 
                     item.setIdItem(contaId);//Imposto l'id
@@ -224,9 +230,6 @@ public class Chat extends BaseActivity
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
                     text.setText("");
 
-                    for (ChatData itemData:mAdapter.getItems()) {
-                        Log.i("CHATDATA",String.valueOf(itemData.getIdItem()));
-                    }
 
                     //Lingua INGLESE
                     if (LoginActivity.lingua.equalsIgnoreCase("English (United States)")){
@@ -617,6 +620,7 @@ public class Chat extends BaseActivity
                         item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                         item2.setType("8");
                         item2.setIdItem(contaId);
+
 
                         data2.add(item2);
                         mAdapter.addItem(data2);

@@ -26,6 +26,10 @@ public class LoggingBackground extends AsyncTask<String, Void, ArrayList<String>
         String email = strings[2];//Email
         String rate = strings[3];//Rate
 
+        String timestampStart = strings[4];
+        String timestampEnd = strings[5];
+
+
         String result = "";
         String urlString = "http://90.147.102.243:8080/php/log.php";
 
@@ -47,7 +51,9 @@ public class LoggingBackground extends AsyncTask<String, Void, ArrayList<String>
             //Stringa di output
             data = URLEncoder.encode("answer", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(risposta), "UTF-8")
                     +"&&rating="+URLEncoder.encode(rate,"UTF-8")+"&&quest="+URLEncoder.encode(mess,"UTF-8")
-                    +"&&email="+URLEncoder.encode(email,"UTF-8");;
+                    +"&&email="+URLEncoder.encode(email,"UTF-8")
+                    +"&&timestampStart="+URLEncoder.encode(timestampStart,"UTF-8")
+                    +"&&timestampEnd="+URLEncoder.encode(timestampEnd,"UTF-8");
 
 
             writer.write(data);

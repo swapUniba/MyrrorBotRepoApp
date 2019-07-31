@@ -95,6 +95,9 @@ public class ChatGuest extends BaseActivity
 
     private TextView txtContestoGuest;//per il cambia
 
+    public static List<ChatData> dataLog;
+    int contaId;//Id dell'item, autoincrement
+    boolean flagDebug; //Flag per verificare se è attivo o no il debug
 
 
     //MAPS
@@ -125,6 +128,10 @@ public class ChatGuest extends BaseActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_chat_guest);
+
+        contaId = 0;
+        flagDebug = false;
+        dataLog = new ArrayList<ChatData>();
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -199,6 +206,22 @@ public class ChatGuest extends BaseActivity
                     item.setType("2");//Imposto il layout della risposta, ovvero YOU
                     String mess = text.getText().toString(); //Domanda dell'utente
                     item.setText(mess);
+
+
+                    //TimestampStart
+                    Date date= new Date();
+                    long time = date.getTime();
+                    String timestampStart = String.valueOf(time);
+                    item.setTimestampStart(Long.valueOf(timestampStart));
+                    Log.i("timeStart",timestampStart);
+
+                    contaId++;
+
+                    item.setIdItem(contaId);//Imposto l'id
+
+                    dataLog.add(item);
+
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -229,6 +252,9 @@ public class ChatGuest extends BaseActivity
                                 item.setType("1");
 
                                 item.setText("The 'change' function is only available if a previous request has been selected!");
+
+                                dataLog.add(item);
+
                                 data.add(item);
                                 mAdapter.addItem(data);
                                 mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -262,6 +288,8 @@ public class ChatGuest extends BaseActivity
                                 currentTime = Calendar.getInstance().getTime();
                                 item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
                                 item.setType("1");
+
+                                dataLog.add(item);
 
                                 item.setText("La funzione 'cambia' è disponibile solo se è stata effettuata una richiesta precedente!");
                                 data.add(item);
@@ -432,10 +460,32 @@ public class ChatGuest extends BaseActivity
                     //Url da visualizzare
                     String url = answer;
 
+
                     item.setText(url);
+
+                    //Id item
+                    item.setIdItem(contaId);
+                    item.answerLog = result;
+                    dataLog.add(item);
+
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
+
+
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
 
                 }else if (intentName.equalsIgnoreCase("Musica")){
@@ -463,11 +513,31 @@ public class ChatGuest extends BaseActivity
 
                             item.setText(urlO);
                             item.setFlag(0);//Indico che è una canzone
+
+                            //Id item
+                            item.setIdItem(contaId);
+                            item.answerLog = result;
+
+                            dataLog.add(item);
+
                             data.add(item);
                             mAdapter.addItem(data);
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                             spotifyAppRemote = item.getmSpotifyAppRemote();
+
+                            if (flagDebug){
+                                //LOGGING
+                                List<ChatData> data2 = new ArrayList<ChatData>();
+                                ChatData item2 = new ChatData();
+                                item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item2.setType("8");
+                                item2.setIdItem(contaId);
+
+                                data2.add(item2);
+                                mAdapter.addItem(data2);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
 
 
 
@@ -490,15 +560,35 @@ public class ChatGuest extends BaseActivity
                             item.setText(urlO);
                             item.setFlag(1);//Indico che è una playlist
                             item.setSpiegazione("");//Spiegazione
+
+                            //Id item
+                            item.setIdItem(contaId);
+
+                            item.answerLog = result;
+                            dataLog.add(item);
+
                             data.add(item);
                             mAdapter.addItem(data);
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
                             spotifyAppRemote = item.getmSpotifyAppRemote();
 
+                            if (flagDebug){
+                                //LOGGING
+                                List<ChatData> data2 = new ArrayList<ChatData>();
+                                ChatData item2 = new ChatData();
+                                item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                                item2.setType("8");
+                                item2.setIdItem(contaId);
 
+                                data2.add(item2);
+                                mAdapter.addItem(data2);
+                                mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                            }
 
                         }
+
+
                     }else {
                         List<ChatData> data = new ArrayList<ChatData>();
                         ChatData item = new ChatData();
@@ -533,9 +623,28 @@ public class ChatGuest extends BaseActivity
                         item.setText(url);
                         item.setSpiegazioneNews("");
 
+                        //Id item
+                        item.setIdItem(contaId);
+
+                        item.answerLog = result;
+                        dataLog.add(item);
+
                         data.add(item);
                         mAdapter.addItem(data);
                         mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                        if (flagDebug){
+                            //LOGGING
+                            List<ChatData> data2 = new ArrayList<ChatData>();
+                            ChatData item2 = new ChatData();
+                            item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                            item2.setType("8");
+                            item2.setIdItem(contaId);
+
+                            data2.add(item2);
+                            mAdapter.addItem(data2);
+                            mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                        }
                     }else {
                         List<ChatData> data = new ArrayList<ChatData>();
                         ChatData item = new ChatData();
@@ -574,6 +683,10 @@ public class ChatGuest extends BaseActivity
                         item.setType("1");
                         String messaggio = getResources().getString(R.string.datiNonPresentiStr);
                         item.setText(messaggio);
+
+                        //Id item
+                        item.setIdItem(contaId);
+                        dataLog.add(item);
 
                         data.add(item);
 
@@ -651,14 +764,72 @@ public class ChatGuest extends BaseActivity
                     item2.setText(dataM);
                     data.add(item2);
 
-
-
                     item.setType("4");
 
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    dataLog.add(item);
 
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 2);
+
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item3 = new ChatData();
+                        item3.setType("8");
+
+                        item3.setIdItem(contaId);
+
+                        data2.add(item3);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
+
+
+                } else if (intentName.equalsIgnoreCase("attiva debug")) {
+                    flagDebug = true;
+
+                    Log.w("ANSWER",answer);
+                    answer = answer.replace("<br>", "\n");
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    item.setText(Html.fromHtml(answer).toString());
+
+
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
+                }else if (intentName.equalsIgnoreCase("disattiva debug")) {
+                    flagDebug = false;
+
+                    Log.w("ANSWER",answer);
+                    answer = answer.replace("<br>", "\n");
+                    List<ChatData> data = new ArrayList<ChatData>();
+                    ChatData item = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item.setType("1");
+
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    item.setText(Html.fromHtml(answer).toString());
+
+                    data.add(item);
+                    mAdapter.addItem(data);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
 
 
                 } else {
@@ -670,9 +841,29 @@ public class ChatGuest extends BaseActivity
                     item.setType("1");
 
                     item.setText(getResources().getString(R.string.loginMyrrorStr));
+
+                    //Id item
+                    item.setIdItem(contaId);
+
+                    item.answerLog = result;
+                    dataLog.add(item);
+
                     data.add(item);
                     mAdapter.addItem(data);
                     mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+                    if (flagDebug){
+                        //LOGGING
+                        List<ChatData> data2 = new ArrayList<ChatData>();
+                        ChatData item2 = new ChatData();
+                        item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                        item2.setType("8");
+                        item2.setIdItem(contaId);
+
+                        data2.add(item2);
+                        mAdapter.addItem(data2);
+                        mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+                    }
 
                 }
 

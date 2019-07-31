@@ -32,8 +32,8 @@
     <string name="inviaStr" >Invia</string>
     <string name="messaggioStr">Scrivi il tuo messaggio</string>
     <string name="soddisfattoStr">Sei soddisfatto della risposta?</string>
-    <string name="siStr">Si</string>
-    <string name="noStr">No</string>
+    <string name="siStr">si</string>
+    <string name="noStr">no</string>
     <string name="spotifyTrackStr1">Purtroppo non posso ancora riprodurre le singole canzoni nell\'app a causa di Spotify</string>
     <string name="spotifyTrackStr2">Puoi riprodurre il brano cercato cliccando sul link qui in basso</string>
     <string name="titoloStr">Titolo</string>
@@ -42,6 +42,6 @@
     <string name="datiNonPresentiStr">Sfortunatamente non sono stati trovati dati a riguardo 😔</string>
     <string name="datiMeteo1Str">Ecco i dati relativi a</string>
     <string name="datiMeteo2Str">del</string>
-    <string name="botBenvenutoStr">Hi! \\uD83D\\uDE04 Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.</string>
+    <string name="botBenvenutoStr">Ciao! 😄  Sono il tuo assistente personale. Sono in grado di fornirti informazioni sul tuo stato fisico, sui tuoi interessi e sulla personalità. Posso consigliarti canzoni, musica e video in base alle tue emozioni e preferenze.</string>
     <string name="loginMyrrorStr">Questa funzione è disponibile solo dopo aver effettuato il login a Myrror 😀</string>
 </resources>

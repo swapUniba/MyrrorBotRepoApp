@@ -16,11 +16,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.pierfrancescosoffritti.youtubeplayer.player.AbstractYouTubePlayerListener;
 import com.pierfrancescosoffritti.youtubeplayer.player.YouTubePlayerFullScreenListener;
 import com.uiresource.messenger.Chat;
+import com.uiresource.messenger.LoginActivity;
 import com.uiresource.messenger.PreferenceData;
 import com.uiresource.messenger.R;
 
 import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.spotify.android.appremote.api.ConnectionParams;
@@ -182,10 +185,16 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     //Logging
     private void configureViewHolder8(HolderLogging vh1, int position) {
 
+
+
         //Se viene premuto il pulsante No
         vh1.getBtnNo().setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                //TimestampStart
+                long timestampStart = 0;
+
                 String email = PreferenceData.getLoggedInEmailUser(view.getContext());
                 String domanda = "";
                 String risposta = "";
@@ -208,11 +217,26 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                             }
                         }
 
+                        if (timestampStart == 0){
+                            timestampStart = chatItem.getTimestampStart();
+                        }
+
                     }
                 }
+
+                //TimestampEnd
+                Date date= new Date();
+                long time = date.getTime();
+                String timestampEnd = String.valueOf(time);
+
+
+                if (email.isEmpty()){
+                    email = "UtenteAnonimo";
+                }
+
                 //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
                 LoggingBackground loggingBackground = new LoggingBackground();
-                loggingBackground.execute(domanda,risposta,email,"No");
+                loggingBackground.execute(domanda,risposta,email,"no",String.valueOf(timestampStart),timestampEnd);
 
                 vh1.getBtnSi().setEnabled(false);
                 vh1.getBtnNo().setEnabled(false);
@@ -224,6 +248,9 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
             @Override
             public void onClick(View view) {
 
+                //TimestampStart
+                long timestampStart = 0;
+
                 String email = PreferenceData.getLoggedInEmailUser(view.getContext());
                 String domanda = "";
                 String risposta = "";
@@ -238,19 +265,42 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                                 risposta = chatItem.getText();
                             }
 
+
                         }else if (chatItem.getType().equalsIgnoreCase("2")){
                             domanda = chatItem.getText();
+
+
+
                         }else {
                             if (chatItem.getAnswerLog() != null){
                                 risposta = chatItem.getAnswerLog();
                             }
                         }
 
+
+                        if (timestampStart == 0){
+                            timestampStart = chatItem.getTimestampStart();
+                        }
+
                     }
                 }
+
+
+                //TimestampEnd
+                Date date= new Date();
+                long time = date.getTime();
+                String timestampEnd = String.valueOf(time);
+
+
                 //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+
+                if (email.isEmpty()){
+                    email = "UtenteAnonimo";
+                }
+
                 LoggingBackground loggingBackground = new LoggingBackground();
-                loggingBackground.execute(domanda,risposta,email,"Si");
+                loggingBackground.execute(domanda,risposta,email,"si",String.valueOf(timestampStart),timestampEnd);
+
 
                 vh1.getBtnSi().setEnabled(false);
                 vh1.getBtnNo().setEnabled(false);

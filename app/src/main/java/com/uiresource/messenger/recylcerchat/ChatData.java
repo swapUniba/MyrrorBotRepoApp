@@ -30,6 +30,9 @@ import retrofit.client.Response;
 public class ChatData {
     String type, text, time, spiegazione, spiegazioneNews;
 
+    long timestampStart = 0;//Quando l'utente invia la domanda
+    long timestampEnd = 0;//Quando l'utente clicca su si/no
+
     int idItem; //id dell'item
 
     public void setSpiegazione(String spiegazione) {
@@ -43,6 +46,22 @@ public class ChatData {
     public void setSpiegazioneNews(String spiegazioneNews) {
         this.spiegazioneNews = spiegazioneNews;
 
+    }
+
+    public void setTimestampStart(long timestampStart) {
+        this.timestampStart = timestampStart;
+    }
+
+    public void setTimestampEnd(long timestampEnd) {
+        this.timestampEnd = timestampEnd;
+    }
+
+    public long getTimestampEnd() {
+        return timestampEnd;
+    }
+
+    public long getTimestampStart() {
+        return timestampStart;
     }
 
     public String getSpiegazioneNews() {
@@ -230,8 +249,6 @@ public class ChatData {
 
 
     }
-
-
 
     private void connected(String urlSpotify,HolderSpotify holderSpotify) {
 

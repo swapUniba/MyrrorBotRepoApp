@@ -14,8 +14,8 @@
     <string name="inviaStr" >Send</string>
     <string name="messaggioStr">Write your message</string>
     <string name="soddisfattoStr">Are you satisfied about the answer?</string>
-    <string name="siStr">Yes</string>
-    <string name="noStr">No</string>
+    <string name="siStr">yes</string>
+    <string name="noStr">no</string>
     <string name="spotifyTrackStr1">Unfortunately I still can\'t play the individual songs in the app because of Spotify</string>
     <string name="spotifyTrackStr2">You can play the searched song by clicking on the link below</string>
     <string name="titoloStr">Title</string>
