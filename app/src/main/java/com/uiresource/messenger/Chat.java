@@ -1352,7 +1352,7 @@ public class Chat extends BaseActivity
         ChatData item = new ChatData();
         Date currentTime = Calendar.getInstance().getTime();
         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-        item.setType("3");//Imposto il layout della risposta, ovvero YOU
+        item.setType("1");//Imposto il layout della risposta, ovvero YOU
         item.setText(getResources().getString(R.string.botBenvenutoStr));
         data.add(item);
         item.setSpiegazioneNews("");

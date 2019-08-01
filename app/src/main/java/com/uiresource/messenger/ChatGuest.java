@@ -641,6 +641,8 @@ public class ChatGuest extends BaseActivity
                             item2.setType("8");
                             item2.setIdItem(contaId);
 
+
+
                             data2.add(item2);
                             mAdapter.addItem(data2);
                             mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
@@ -803,7 +805,8 @@ public class ChatGuest extends BaseActivity
                     //Id item
                     item.setIdItem(contaId);
 
-                    item.setText(Html.fromHtml(answer).toString());
+
+                    item.setText("modalità di debug attiva");
 
 
                     data.add(item);
@@ -825,7 +828,7 @@ public class ChatGuest extends BaseActivity
                     //Id item
                     item.setIdItem(contaId);
 
-                    item.setText(Html.fromHtml(answer).toString());
+                    item.setText("modalità di debug disattivata");
 
                     data.add(item);
                     mAdapter.addItem(data);
@@ -1159,7 +1162,7 @@ public class ChatGuest extends BaseActivity
         ChatData item = new ChatData();
         Date currentTime = Calendar.getInstance().getTime();
         item.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
-        item.setType("3");//Imposto il layout della risposta, ovvero YOU
+        item.setType("1");//Imposto il layout della risposta, ovvero YOU
         item.setText(getResources().getString(R.string.botBenvenutoStr));
         item.setSpiegazioneNews("");
         data.add(item);

@@ -4,7 +4,9 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -25,7 +27,10 @@ public class HolderNews extends RecyclerView.ViewHolder {
         chatText = (TextView) v.findViewById(R.id.tv_chat_text);
         this.v = v;
 
+
     }
+
+
 
     public TextView getTime() {
         return time;
@@ -46,8 +51,6 @@ public class HolderNews extends RecyclerView.ViewHolder {
     }
 
 
-
-
     public ImageView getImg(){
         return immagine;
     }
@@ -58,9 +61,7 @@ public class HolderNews extends RecyclerView.ViewHolder {
     }
 
 
-
     public class GetImageFromURL extends AsyncTask<String,Void,Bitmap> {
-
 
         @Override
         protected Bitmap doInBackground(String... url) {

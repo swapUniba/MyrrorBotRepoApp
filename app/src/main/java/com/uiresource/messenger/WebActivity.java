@@ -20,6 +20,7 @@ public class WebActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.webview);
         mToolbar = (Toolbar) findViewById(R.id.toolbar);
+        mToolbar.setTitle("Web");
         setSupportActionBar(mToolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setDisplayShowHomeEnabled(true);

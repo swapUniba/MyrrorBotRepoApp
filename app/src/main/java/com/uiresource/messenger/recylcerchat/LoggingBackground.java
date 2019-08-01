@@ -1,6 +1,7 @@
 package com.uiresource.messenger.recylcerchat;
 
 import android.os.AsyncTask;
+import android.util.Log;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -30,6 +31,9 @@ public class LoggingBackground extends AsyncTask<String, Void, ArrayList<String>
         String timestampEnd = strings[5];
 
 
+        String flag = "" ;
+
+
         String result = "";
         String urlString = "http://90.147.102.243:8080/php/log.php";
 
@@ -48,12 +52,33 @@ public class LoggingBackground extends AsyncTask<String, Void, ArrayList<String>
 
             String data = "";
 
-            //Stringa di output
-            data = URLEncoder.encode("answer", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(risposta), "UTF-8")
-                    +"&&rating="+URLEncoder.encode(rate,"UTF-8")+"&&quest="+URLEncoder.encode(mess,"UTF-8")
-                    +"&&email="+URLEncoder.encode(email,"UTF-8")
-                    +"&&timestampStart="+URLEncoder.encode(timestampStart,"UTF-8")
-                    +"&&timestampEnd="+URLEncoder.encode(timestampEnd,"UTF-8");
+            try{
+                flag = strings[6];
+
+
+                //Stringa di output
+                data = URLEncoder.encode("answer", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(risposta), "UTF-8")
+                        +"&&rating="+URLEncoder.encode(rate,"UTF-8")+"&&quest="+URLEncoder.encode(mess,"UTF-8")
+                        +"&&email="+URLEncoder.encode(email,"UTF-8")
+                        +"&&timestampStart="+URLEncoder.encode(timestampStart,"UTF-8")
+                        +"&&timestampEnd="+URLEncoder.encode(timestampEnd,"UTF-8")
+                        +"&&flag="+URLEncoder.encode(flag,"UTF-8");
+
+                Log.i("flag",flag);
+
+
+            }catch (ArrayIndexOutOfBoundsException e){
+
+                //Stringa di output
+                data = URLEncoder.encode("answer", "UTF-8") + "=" + URLEncoder.encode(String.valueOf(risposta), "UTF-8")
+                        +"&&rating="+URLEncoder.encode(rate,"UTF-8")+"&&quest="+URLEncoder.encode(mess,"UTF-8")
+                        +"&&email="+URLEncoder.encode(email,"UTF-8")
+                        +"&&timestampStart="+URLEncoder.encode(timestampStart,"UTF-8")
+                        +"&&timestampEnd="+URLEncoder.encode(timestampEnd,"UTF-8");
+
+            }
+
+
 
 
             writer.write(data);

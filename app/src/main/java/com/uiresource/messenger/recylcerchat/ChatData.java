@@ -35,6 +35,8 @@ public class ChatData {
 
     int idItem; //id dell'item
 
+    String flagClick = "";//Verifico se l'utente ha cliccato sul link
+
     public void setSpiegazione(String spiegazione) {
         this.spiegazione = spiegazione;
     }
@@ -98,6 +100,14 @@ public class ChatData {
 
     public int getIdItem() {
         return idItem;
+    }
+
+    public void setFlagClick(String flagClick) {
+        this.flagClick = flagClick;
+    }
+
+    public String getFlagClick() {
+        return flagClick;
     }
 
     //METEO

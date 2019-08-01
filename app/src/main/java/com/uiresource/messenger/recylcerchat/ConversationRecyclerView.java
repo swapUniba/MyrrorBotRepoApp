@@ -194,6 +194,7 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
                 //TimestampStart
                 long timestampStart = 0;
+                String flagClick = "";
 
                 String email = PreferenceData.getLoggedInEmailUser(view.getContext());
                 String domanda = "";
@@ -221,6 +222,10 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                             timestampStart = chatItem.getTimestampStart();
                         }
 
+                        if (!chatItem.flagClick.isEmpty()){
+                            flagClick = chatItem.getFlagClick();
+                        }
+
                     }
                 }
 
@@ -234,9 +239,17 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                     email = "UtenteAnonimo";
                 }
 
-                //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
-                LoggingBackground loggingBackground = new LoggingBackground();
-                loggingBackground.execute(domanda,risposta,email,"no",String.valueOf(timestampStart),timestampEnd);
+                if (!flagClick.isEmpty()){
+                    //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                    LoggingBackground loggingBackground = new LoggingBackground();
+                    loggingBackground.execute(domanda,risposta,email,"no",String.valueOf(timestampStart),timestampEnd,flagClick);
+                }else {
+                    //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                    LoggingBackground loggingBackground = new LoggingBackground();
+                    loggingBackground.execute(domanda,risposta,email,"no",String.valueOf(timestampStart),timestampEnd);
+                }
+
+
 
                 vh1.getBtnSi().setEnabled(false);
                 vh1.getBtnNo().setEnabled(false);
@@ -250,6 +263,8 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
 
                 //TimestampStart
                 long timestampStart = 0;
+                String flagClick = "";
+
 
                 String email = PreferenceData.getLoggedInEmailUser(view.getContext());
                 String domanda = "";
@@ -282,6 +297,10 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                             timestampStart = chatItem.getTimestampStart();
                         }
 
+                        if (!chatItem.flagClick.isEmpty()){
+                            flagClick = chatItem.getFlagClick();
+                        }
+
                     }
                 }
 
@@ -298,8 +317,15 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
                     email = "UtenteAnonimo";
                 }
 
-                LoggingBackground loggingBackground = new LoggingBackground();
-                loggingBackground.execute(domanda,risposta,email,"si",String.valueOf(timestampStart),timestampEnd);
+                if (!flagClick.isEmpty()){
+                    //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                    LoggingBackground loggingBackground = new LoggingBackground();
+                    loggingBackground.execute(domanda,risposta,email,"si",String.valueOf(timestampStart),timestampEnd,flagClick);
+                }else {
+                    //Log.i("STAMPA",id + " " + email + " " +domanda + " " + risposta);
+                    LoggingBackground loggingBackground = new LoggingBackground();
+                    loggingBackground.execute(domanda,risposta,email,"si",String.valueOf(timestampStart),timestampEnd);
+                }
 
 
                 vh1.getBtnSi().setEnabled(false);
@@ -312,11 +338,18 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
     }
 
     private void configureViewHolderNews(final HolderNews vh1, int position) {
+
+        items.get(position).setFlagClick("false");
         final String url = items.get(position).getText();
         //Log.w(TAG,url);
         vh1.v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Log.i("click","click");
+
+                items.get(position).setFlagClick("true");//Imposto a true
+
                 Intent intent = new Intent(view.getContext(), WebActivity.class);
                 intent.putExtra("url",url);
                 view.getContext().startActivity(intent);
@@ -325,12 +358,15 @@ public class ConversationRecyclerView extends RecyclerView.Adapter<RecyclerView.
         vh1.setImgBack(items.get(position).getImg());
         vh1.getChatText().setText(items.get(position).getText());
 
+
+
     }
 
     private void configureViewHolder4(holderMeteo vh1, int position) {
 
         ArrayList<Meteo> listMeteo = items.get(position).list;
         vh1.init(listMeteo);
+
 
     }
 
