@@ -1077,14 +1077,9 @@ public class Chat extends BaseActivity
         protected ArrayList<String> doInBackground(String... voids) {
 
             String mess = voids[0];//Domanda dell'utente
-            String urlString = "";
-            String result = "";
-            if (LoginActivity.lingua.equalsIgnoreCase("English (United States)")){
-                urlString = "http://90.147.102.243:8080/en/php/intentDetection.php";
-            }else{
-                 urlString = "http://90.147.102.243:8080/php/intentDetection.php";
-            }
 
+            String result = "";
+            String urlString = "http://90.147.102.243:8080/php/intentDetection.php";
 
             try {
 

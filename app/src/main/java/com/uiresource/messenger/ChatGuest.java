@@ -889,13 +889,7 @@ public class ChatGuest extends BaseActivity
             String mess = voids[0];//Domanda dell'utente
 
             String result = "";
-            String urlString = "";
-            if (LoginActivity.lingua.equalsIgnoreCase("English (United States)")){
-                urlString = "http://90.147.102.243:8080/en/php/intentGuest.php";
-            }else{
-                 urlString = "http://90.147.102.243:8080/php/intentGuest.php";
-            }
-
+            String urlString = "http://90.147.102.243:8080/php/intentGuest.php";
 
             try {
 
