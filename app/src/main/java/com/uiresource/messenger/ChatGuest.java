@@ -663,6 +663,22 @@ public class ChatGuest extends BaseActivity
 
 
 
+                }else if (intentName.equals("meteo binario")){
+                    JSONObject obj = new JSONObject(answer);
+                    String meteo = obj.getString("res");
+                    String city = obj.getString("city");
+                    List<ChatData> data2 = new ArrayList<ChatData>();
+                    ChatData item2 = new ChatData();
+                    Date currentTime = Calendar.getInstance().getTime();
+                    item2.setTime(String.valueOf(currentTime.getHours()) + ":" + String.valueOf(currentTime.getMinutes()));
+                    item2.setType("1");
+                    item2.setIdItem(contaId);
+                    item2.setText(meteo);
+                    data2.add(item2);
+                    mAdapter.addItem(data2);
+                    mRecyclerView.smoothScrollToPosition(mRecyclerView.getAdapter().getItemCount() - 1);
+
+
                 }else if(intentName.equals("Meteo")){
 
                     JSONObject obj = new JSONObject(answer);
@@ -889,7 +905,13 @@ public class ChatGuest extends BaseActivity
             String mess = voids[0];//Domanda dell'utente
 
             String result = "";
-            String urlString = "http://90.147.102.243:8080/php/intentGuest.php";
+            String urlString = "";
+            if (LoginActivity.lingua.equalsIgnoreCase("English (United States)")){
+                urlString = "http://90.147.102.243:8080/en/php/intentGuest.php";
+            }else{
+                 urlString = "http://90.147.102.243:8080/php/intentGuest.php";
+            }
+
 
             try {
 
